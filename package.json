@@ -1,0 +1,29 @@
+{
+  "name": "oticon",
+  "version": "1.0.0",
+  "description": "Sistema de administración de negocio de ferretería Oticon",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DarkBlood202/oticon.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DarkBlood202/oticon/issues"
+  },
+  "homepage": "https://github.com/DarkBlood202/oticon#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongoose": "^5.11.15",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
+}
