@@ -3,8 +3,12 @@ const path = require('path');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 
+const connectionString = 'mongodb://admin:root@oticon.tahsk.mongodb.net/oticon?authSource=admin';
+
 const app = express();
-// mongoose.connect('');
+mongoose.connect(connectionString, { useNewUrlParser: true })
+    .then(db => console.log("Connected to database."))
+    .catch(err => console.error(err));
 
 // Settings
 app.set('port', process.env.PORT || 5000);
