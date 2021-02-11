@@ -3,10 +3,10 @@ const path = require('path');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 
-const connectionString = 'mongodb://admin:root@oticon.tahsk.mongodb.net/oticon?authSource=admin';
+const connectionString = "mongodb+srv://dber:dber@oticon.tahsk.mongodb.net/oticon?retryWrites=true&w=majority";
 
 const app = express();
-mongoose.connect(connectionString, { useNewUrlParser: true })
+mongoose.connect(connectionString, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true })
     .then(db => console.log("Connected to database."))
     .catch(err => console.error(err));
 
