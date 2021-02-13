@@ -9,6 +9,11 @@ router.get('/', async(req, res)=>{
     console.log(productos);
 });
 
+router.get('/:id', async(req, res)=>{
+    const producto = await Producto.findById(req.params.id);
+    res.json(producto);
+});
+
 router.post('/', async(req, res)=>{
     const producto = new Producto(req.body);
     await producto.save();

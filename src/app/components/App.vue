@@ -10,12 +10,17 @@
             <div class="container my-4 bg-white p-8 shadow-md rounded-xl">
                 <h1 class="font-bold text-4xl">Registro de productos</h1>
                 <p class="mt-5 text-gray-300">Paso 1/?</p>
-                <form class="mt-5" @submit.prevent="registrarProducto">
+                <form class="mt-5" @submit.prevent="loadProducto">
                     <label class="uppercase">Nombre</label><br>
                     <input type="text" v-model="producto.nombre" class="mt-2 mb-4 py-1 px-2 rounded-2xl border-2 border-yellow-300 w-full">
                     <label class="uppercase">Descripcion</label><br>
                     <input type="text" v-model="producto.descripcion" class="mt-2 mb-4 py-1 px-2 rounded-2xl border-2 border-yellow-300 w-full">
-                    <button type="submit" class="mt-10 bg-green-300 hover:bg-green-400 p-4 rounded-2xl font-bold text-white uppercase w-full">Agregar producto</button>
+                    <template v-if="modificando === false">
+                        <button type="submit" class="mt-10 bg-green-300 hover:bg-green-400 p-4 rounded-2xl font-bold text-white uppercase w-full">Agregar producto</button>
+                    </template>
+                    <template v-else>
+                        <button type="submit" class="mt-10 bg-green-300 hover:bg-green-400 p-4 rounded-2xl font-bold text-white uppercase w-full">Modificar producto</button>
+                    </template>
                 </form>
             </div>
             <div class="container my-4 bg-white p-8 shadow-md rounded-xl">
@@ -30,6 +35,7 @@
                             <th class="border-2 border-white p-2">Nombre</th>
                             <th class="border-2 border-white p-2">Descripcion</th>
                             <th class="border-2 border-white p-2"></th>
+                            <th class="border-2 border-white p-2"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -37,6 +43,7 @@
                             <td class="border-2 border-white px-4 py-1">{{ p.nombre }}</td>
                             <td class="border-2 border-white px-4 py-1">{{ p.descripcion }}</td>
                             <td class="border-2 border-white px-4 py-1"><button @click="eliminarProducto(p._id)" class="font-bold text-red-400 hover:text-red-300">X</button></td>
+                            <td class="border-2 border-white px-4 py-1"><button @click="modificarProducto(p._id)" class="font-bold hover:text-gray-300">M</button></td>
                         </tr>
                     </tbody>
                 </table>
@@ -58,6 +65,8 @@ export default {
         return {
             producto: new Producto(),
             lista_productos : [],
+            modificando: false,
+            reqProducto: ''
         }
     },
     created(){
@@ -71,20 +80,38 @@ export default {
                     this.lista_productos = data;
                 });
         },
-        registrarProducto(){
-            fetch('/productos', {
-                method: 'POST',
-                body: JSON.stringify(this.producto),
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-type': 'application/json'
-                }
-            })
-            .then(res => res.json())
-            .then(data => {
-                this.producto = new Producto();
-                this.obtenerProductos();
-            });
+        loadProducto(){
+            if(this.modificando === false){
+                fetch('/productos', {
+                    method: 'POST',
+                    body: JSON.stringify(this.producto),
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-type': 'application/json'
+                    }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    this.producto = new Producto();
+                    this.obtenerProductos();
+                });
+            }
+            else{
+                fetch('/productos/' + this.reqProducto, {
+                    method: 'PUT',
+                    body: JSON.stringify(this.producto),
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-type': 'application/json'
+                    }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    this.obtenerProductos();
+                    this.modificando = false;
+                });
+            }
+            
         },
         eliminarProducto(id){
             fetch('/productos/' + id, {
@@ -98,6 +125,15 @@ export default {
             .then(data => {
                 this.obtenerProductos();
             });
+        },
+        modificarProducto(id){
+            fetch('/productos/' + id)
+                .then(res => res.json())
+                .then(data => {
+                    this.producto = new Producto(data.nombre, data.descripcion);
+                    this.reqProducto = data._id;
+                    this.modificando = true;
+                });
         }
     }
 }
