@@ -6,7 +6,13 @@ const mongoose = require('mongoose');
 const connectionString = "mongodb+srv://dber:dber@oticon.tahsk.mongodb.net/oticon?retryWrites=true&w=majority";
 
 const app = express();
-mongoose.connect(connectionString, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true })
+
+mongoose.connect(connectionString, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
+    useFindAndModify: false,
+})
     .then(db => console.log("Connected to database."))
     .catch(err => console.error(err));
 
@@ -18,7 +24,7 @@ app.use(morgan('dev'));
 app.use(express.json());
 
 // Routes
-app.use('/test', require('./routes/test'));
+app.use('/productos', require('./routes/productos'));
 
 // Static
 app.use(express.static(path.join(__dirname, 'public')));
