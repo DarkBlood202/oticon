@@ -2,34 +2,35 @@ const express = require('express');
 const router = express.Router();
 
 const Producto = require('../models/Producto');
+const Categoria = require();
 
-router.get('/', async(req, res)=>{
+router.get('/productos', async(req, res)=>{
     const productos = await Producto.find();
     res.json(productos);
-    console.log(productos);
+    // console.log(productos);
 });
 
-router.get('/:id', async(req, res)=>{
+router.post('/productos/nuevo', async(req, res)=>{
+    const producto = new Producto(req.body);
+    await producto.save();
+    res.json({
+        status: "Producto registrado"
+    });
+});
+
+router.get('/producto/:id', async(req, res)=>{
     const producto = await Producto.findById(req.params.id);
     res.json(producto);
 });
 
-router.post('/', async(req, res)=>{
-    const producto = new Producto(req.body);
-    await producto.save();
-    res.json({
-        status: "Producto registrado (algo asi...)"
-    });
-});
-
-router.put('/:id', async(req, res)=>{
+router.put('/producto/:id', async(req, res)=>{
     await Producto.findByIdAndUpdate(req.params.id, req.body);
     res.json({
         status: "Producto modificado"
     });
 });
 
-router.delete('/:id', async(req, res)=>{
+router.delete('/producto/:id', async(req, res)=>{
     await Producto.findByIdAndDelete(req.params.id);
     res.json({
         status: "Producto eliminado"

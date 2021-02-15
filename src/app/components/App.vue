@@ -74,7 +74,7 @@ export default {
     },
     methods: {
         obtenerProductos(){
-            fetch('/productos')
+            fetch('/api/productos')
                 .then(res => res.json())
                 .then(data => {
                     this.lista_productos = data;
@@ -82,7 +82,7 @@ export default {
         },
         loadProducto(){
             if(this.modificando === false){
-                fetch('/productos', {
+                fetch('/api/productos/nuevo', {
                     method: 'POST',
                     body: JSON.stringify(this.producto),
                     headers: {
@@ -97,7 +97,7 @@ export default {
                 });
             }
             else{
-                fetch('/productos/' + this.reqProducto, {
+                fetch('/api/producto/' + this.reqProducto, {
                     method: 'PUT',
                     body: JSON.stringify(this.producto),
                     headers: {
@@ -114,7 +114,7 @@ export default {
             
         },
         eliminarProducto(id){
-            fetch('/productos/' + id, {
+            fetch('/api/producto/' + id, {
                 method: 'DELETE',
                 headers: {
                     'Accept': 'application/json',
@@ -127,7 +127,7 @@ export default {
             });
         },
         modificarProducto(id){
-            fetch('/productos/' + id)
+            fetch('/api/producto/' + id)
                 .then(res => res.json())
                 .then(data => {
                     this.producto = new Producto(data.nombre, data.descripcion);
