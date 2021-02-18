@@ -17,7 +17,9 @@ mongoose.connect(connectionString, {
     .catch(err => console.error(err));
 
 // Settings
-app.set('port', process.env.PORT || 5000);
+app.set('port', process.env.PORT || 8000);
+app.set('views', path.join(__dirname, "views"));
+app.set('view engine', 'ejs');
 
 // Middlewares
 app.use(morgan('dev'));
@@ -25,6 +27,7 @@ app.use(express.json());
 
 // Routes
 app.use('/api', require('./routes/productos'));
+app.use('/', require('./routes/routes'));
 
 // Static
 app.use(express.static(path.join(__dirname, 'public')));

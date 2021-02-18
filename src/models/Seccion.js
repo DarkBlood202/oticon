@@ -2,7 +2,11 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const Seccion = new Schema({
-    codigo: String,
+    codigo: {
+        type: String,
+        index: true,
+        unique: true,
+    },
     nombre: String,
 }, {
     collection: 'secciones'

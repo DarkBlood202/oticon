@@ -1,27 +1,25 @@
-const { VueLoaderPlugin } = require('vue-loader');
+const path = require('path');
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 module.exports = {
-    entry: './src/app/index.js',
+    entry: "./src/app.js",
     output: {
-        path: __dirname + '/src/public/js',
-        filename: 'bundle.js'
+        filename: "bundle.js",
+        path: path.resolve(__dirname, "src", "public", "js")
     },
     module: {
         rules: [
             {
-                test: /\.js$/,
-                exclude: /node_modules/,
-                use: {
-                    loader: 'babel-loader'
-                }
-            },
-            {
                 test: /\.vue$/,
                 loader: 'vue-loader'
+            },
+            {
+                test: /\.js$/,
+                loader: 'babel-loader'
             }
         ]
     },
     plugins: [
-        new VueLoaderPlugin()
+        new VueLoaderPlugin(),
     ]
 }

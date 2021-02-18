@@ -8,7 +8,7 @@ const Producto = new Schema({
     fechaCaducidad: Date,
     marca: String,
     proveedor: String,
-    precioCosto: Number,
+    precioCompra: Number,
     precioVenta: Number,
     precioMayorista: Number,
     cantidadMayorista: Number,
@@ -17,21 +17,16 @@ const Producto = new Schema({
     codigoCategoria: String,
     idMedidaVenta: String,
 
-    // seccion: {
-    //     nombre: String,
-    //     codigo: String,
+    // id: {
+    //     type: String,
+    //     index: true,
+    //     unique: true,
     // },
-    // categoria: {
-    //     nombre: String,
-    //     codigo: String,
-    // },
-    // medida_venta: {
-    //     nombre: String,
-    //     abreviacion: String,
-    // },
-
-    id: String,
-    codigoBarras: String
+    // codigoBarras: {
+    //     type: String,
+    //     index: true,
+    //     unique: true,
+    // }
 }, {
     collection: 'productos'
 });

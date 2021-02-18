@@ -39,7 +39,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="p of lista_productos">
+                        <tr v-for="(p, it) in lista_productos" :key="it">
                             <td class="border-2 border-white px-4 py-1">{{ p.nombre }}</td>
                             <td class="border-2 border-white px-4 py-1">{{ p.descripcion }}</td>
                             <td class="border-2 border-white px-4 py-1"><button @click="eliminarProducto(p._id)" class="font-bold text-red-400 hover:text-red-300">X</button></td>
@@ -54,9 +54,9 @@
 
 <script>
 class Producto{
-    constructor(nombre = "", descripcion = ""){
-        this.nombre = nombre;
-        this.descripcion = descripcion;
+    constructor(){
+        this.nombre = ""
+        this.descripcion = "";
     }
 }
 
