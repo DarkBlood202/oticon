@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
+
 const Producto = require('../models/Producto');
 const Categoria = require('../models/Categoria');
 const Seccion = require('../models/Seccion');

@@ -17,6 +17,11 @@ const Producto = new Schema({
     codigoCategoria: String,
     idMedidaVenta: String,
 
+    unidadEquivalente: {
+        cantidadEquivalente: Number,
+        idMedidaAsociada: String
+    },
+
     // id: {
     //     type: String,
     //     index: true,

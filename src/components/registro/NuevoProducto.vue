@@ -2,7 +2,7 @@
     <div>
         <div class="container bg-white rounded-xl shadow-md p-4 px-6 mx-auto h-screen mb-4">
             <h1 class="font-bold text-4xl">Registro de Productos</h1>
-            <h3 class="text-gray-500 text-xl my-4 mb-8">Paso {{ stepCounter }} de 3</h3>
+            <h3 class="text-gray-500 text-xl my-4 mb-8">Paso {{ stepCounter }} de 4</h3>
             <form @submit.prevent="agregarProducto">
                 <div v-show="stepCounter == 1">
                     <div class="my-4">
@@ -87,11 +87,29 @@
                     </div>
                 </div>
 
+                <div v-show="stepCounter == 4">
+                    <div class="my-4">
+                        <label class="uppercase">Unidad equivalente</label>
+                        <p class="my-4 text-justify text-xs text-gray-500">1 Unidad Equivalente es cuánto de cierta medida de venta corresponde a una "unidad" de producto.</p>
+                        <div class="grid grid-cols-9 gap-4">
+                            <span class="col-span-2 block text-center">1 unidad</span>
+                            <span class="col-span-1 block text-center font-bold font-xl">=</span>
+                            <input type="number" required v-model="producto.unidadEquivalente.cantidadEquivalente" step="0.001" class="col-span-3 pl-2 py-1 rounded-full border-2 border-yellow-500">
+                            <select required v-model="producto.unidadEquivalente.idMedidaAsociada" class="col-span-3 pl-2 py-1 rounded-full border-2 border-yellow-500">
+                                <option disabled value="">Seleccionar medida de venta</option>
+                                <option v-for="(medida, it) in lista_medidas" :key="it" v-bind:value="medida._id">
+                                    {{ medida.nombre }} ({{ medida.abreviacion }})
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="grid grid-cols-2 gap-4 mt-10 mb-2">
-                    <button type="button" v-show="stepCounter == 1" class="bg-red-500 hover:bg-red-400 rounded-2xl p-4 font-bold text-white text-xl">Cancelar</button>
+                    <a href="/productos/registrar" v-show="stepCounter == 1" class="bg-red-500 hover:bg-red-400 rounded-2xl p-4 font-bold text-white text-center text-xl">Cancelar</a>
                     <button type="button" v-show="stepCounter > 1" @click="goToPaso(-1)" class="bg-yellow-500 hover:bg-yellow-400 rounded-2xl p-4 font-bold text-white text-xl">Anterior</button>
-                    <button type="button" v-show="stepCounter < 3" @click="goToPaso(1)" class="bg-yellow-500 hover:bg-yellow-400 rounded-2xl p-4 font-bold text-white text-xl">Siguiente</button>
-                    <button type="submit" v-show="stepCounter == 3" class="bg-indigo-500 hover:bg-indigo-400 rounded-2xl p-4 font-bold text-white text-xl">Terminar</button>
+                    <button type="button" v-show="stepCounter < 4" @click="goToPaso(1)" class="bg-yellow-500 hover:bg-yellow-400 rounded-2xl p-4 font-bold text-white text-xl">Siguiente</button>
+                    <button type="submit" v-show="stepCounter == 4" class="bg-indigo-500 hover:bg-indigo-400 rounded-2xl p-4 font-bold text-white text-xl">Terminar</button>
                 </div>
             </form>
         </div>
@@ -114,6 +132,10 @@ class Producto{
         this.codigoSeccion = "";
         this.codigoCategoria = "";
         this.idMedidaVenta = "";
+        this.unidadEquivalente = {
+            cantidadEquivalente: null,
+            idMedidaAsociada: ""
+        };
         // this.id = "";
         // this.codigoBarras = "";
     }
@@ -159,8 +181,7 @@ export default {
         },
         goToPaso(paso){
             this.stepCounter = this.stepCounter + paso;
-            this.stepCounter = Math.min(Math.max(this.stepCounter, 1), 3);
-            console.log(this.stepCounter);
+            this.stepCounter = Math.min(Math.max(this.stepCounter, 1), 4);
         },
         agregarProducto(){
             fetch('/api/productos', {
@@ -174,8 +195,8 @@ export default {
                 .then(res => res.json())
                 .then(data => {
                     this.producto = new Producto();
-                    // this.producto = {};
                 });
+            this.stepCounter = 1;
         }
     }
 }

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="container bg-white rounded-xl shadow-md p-4 px-6 mx-auto">
+        <div v-show="!modificando" class="container bg-white rounded-xl shadow-md p-4 px-6 mx-auto">
             <h1 class="font-bold text-4xl">Productos</h1>
             <div class="flex my-4 mb-8 gap-4">
                 <div class="bg-gray-300 px-4 py-1 rounded-full w-3/5">Buscar...</div>
@@ -15,32 +15,200 @@
                             <th class="border-2 border-white px-4">Precio venta</th>
                             <th class="border-2 border-white px-4">Precio mayorista</th>
                             <th class="border-2 border-white px-4"></th>
+                            <th class="border-2 border-white px-4"></th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr v-for="(producto, it) in lista_productos" :key="it">
                             <td class="font-normal border-2 border-white px-4 text-center">{{ producto.nombre }}</td>
-                            <td class="font-normal border-2 border-white px-4 text-center">{{ producto.cantidad }}</td>
+                            <td v-bind:class="producto.cantidad <= 100 ? ['bg-red-100', 'font-bold', 'text-red-900'] : (producto.cantidad <= 333 ? 'bg-yellow-100' : 'bg-green-100')" class="font-normal border-2 border-white px-4 text-center">{{ producto.cantidad }}</td>
                             <td class="font-normal border-2 border-white px-4 text-center">{{ producto.precioVenta.toFixed(2) }}</td>
                             <td class="font-normal border-2 border-white px-4 text-center">{{ producto.precioMayorista.toFixed(2) }} (x{{ producto.cantidadMayorista }})</td>
-                            <td class="font-normal border-2 border-white px-6 text-center"><button class="font-bold hover:text-gray-300 anicon">o</button></td>
+                            <td class="font-normal border-2 border-white px-6 text-center"><button @click="seleccionarProducto(producto._id)" class="font-bold hover:text-gray-300 anicon">o</button></td>
+                            <td class="font-normal border-2 border-white px-6 text-center"><button @click="eliminarProducto(producto._id)" class="font-bold text-red-500 hover:text-red-300 font-mono">X</button></td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
+        <div v-show="modificando" class="container bg-white rounded-xl shadow-md p-4 px-6 mx-auto mb-4">
+            <h1 class="font-bold text-4xl">Modificar productos</h1>
+            <h3 class="text-gray-500 text-xl my-4 mb-8">Paso {{ stepCounter }} de 4</h3>
+            <form @submit.prevent="modificarProducto()">
+                <div v-show="stepCounter == 1">
+                    <div class="my-4">
+                        <label class="uppercase">Nombre</label><br>
+                        <input type="text" required v-model="producto.nombre" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
+                    </div>
+                    <div class="my-4">
+                        <label class="uppercase">Descripcion</label><br>
+                        <input type="text" required v-model="producto.descripcion" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 my-4">
+                        <div class="col-span-1">
+                            <label class="uppercase">Cantidad</label><br>
+                            <input type="number" required v-model="producto.cantidad" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
+                        </div>
+                        <div class="col-span-1">
+                            <label class="uppercase">Fecha caducidad</label><br>
+                            <input type="date" required v-model="producto.fechaCaducidad" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
+                        </div>
+                    </div>
+                </div>
+
+                <div v-show="stepCounter == 2">
+                    <div class="grid grid-cols-2 gap-8 my-4">
+                        <div class="col-span-1">
+                            <label class="uppercase">Marca</label><br>
+                            <input type="text" required v-model="producto.marca" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
+                        </div>
+                        <div class="col-span-1">
+                            <label class="uppercase">Proveedor</label><br>
+                            <input type="text" required v-model="producto.proveedor" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
+                        </div>
+                    </div>
+                    <div class="my-4">
+                        <label class="uppercase">Seccion</label><br>
+                        <select required v-model="producto.codigoSeccion" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
+                            <option aria-disabled="" value="">Seleccionar sección</option>
+                            <option v-for="(seccion, it) in lista_secciones" :key="it" v-bind:value="seccion.codigo">
+                                {{ seccion.codigo }}: {{ seccion.nombre }}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="my-4">
+                        <label class="uppercase">Categoria</label><br>
+                        <select required v-model="producto.codigoCategoria" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
+                            <option disabled value="">Seleccionar categoría</option>
+                            <option v-for="(categoria, it) in lista_categorias" :key="it" v-bind:value="categoria.codigo">
+                                {{ categoria.codigo }}: {{ categoria.nombre }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <div v-show="stepCounter == 3">
+                    <div class="my-4">
+                        <label class="uppercase">Medida de venta</label><br>
+                        <select required v-model="producto.idMedidaVenta" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
+                            <option disabled value="">Seleccionar medida de venta</option>
+                            <option v-for="(medida, it) in lista_medidas" :key="it" v-bind:value="medida._id">
+                                {{ medida.nombre }} ({{ medida.abreviacion }})
+                            </option>
+                        </select>
+                    </div>
+                    <div class="grid grid-cols-2 gap-8 my-4">
+                        <div class="col-span-1">
+                            <label class="uppercase">Precio compra</label><br>
+                            <input type="number" required v-model="producto.precioCompra" step="0.01" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
+                        </div>
+                        <div class="col-span-1">
+                            <label class="uppercase">Precio venta</label><br>
+                            <input type="number" required v-model="producto.precioVenta" step="0.01" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
+                        </div>
+                    </div>
+                    <div class="my-4">
+                        <label class="uppercase">Precio mayorista</label><br>
+                        <div class="grid grid-cols-9">
+                            <input type="number" required v-model="producto.precioMayorista" step="0.01" class="col-span-4 mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
+                            <span class="col-span-1 pt-3 font-bold text-center">X</span>
+                            <input type="number" required v-model="producto.cantidadMayorista" class="col-span-4 mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
+                            <span class="col-end-9 sm:col-end-10 text-right text-xs uppercase">Unidades...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div v-show="stepCounter == 4">
+                    <div class="my-4">
+                        <label class="uppercase">Unidad equivalente</label>
+                        <p class="my-4 text-justify text-xs text-gray-500">1 Unidad Equivalente es cuánto de cierta medida de venta corresponde a una "unidad" de producto.</p>
+                        <div class="grid grid-cols-9 gap-4">
+                            <span class="col-span-2 block text-center">1 unidad</span>
+                            <span class="col-span-1 block text-center font-bold font-xl">=</span>
+                            <input type="number" required v-model="producto.unidadEquivalente.cantidadEquivalente" step="0.001" class="col-span-3 pl-2 py-1 rounded-full border-2 border-yellow-500">
+                            <select required v-model="producto.unidadEquivalente.idMedidaAsociada" class="col-span-3 pl-2 py-1 rounded-full border-2 border-yellow-500">
+                                <option disabled value="">Seleccionar medida de venta</option>
+                                <option v-for="(medida, it) in lista_medidas" :key="it" v-bind:value="medida._id">
+                                    {{ medida.nombre }} ({{ medida.abreviacion }})
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 mt-10 mb-2">
+                    <button type="button" @click="modificando = false" v-show="stepCounter == 1" class="bg-red-500 hover:bg-red-400 rounded-2xl p-4 font-bold text-white text-xl">Cancelar</button>
+                    <button type="button" v-show="stepCounter > 1" @click="goToPaso(-1)" class="bg-yellow-500 hover:bg-yellow-400 rounded-2xl p-4 font-bold text-white text-xl">Anterior</button>
+                    <button type="button" v-show="stepCounter < 4" @click="goToPaso(1)" class="bg-yellow-500 hover:bg-yellow-400 rounded-2xl p-4 font-bold text-white text-xl">Siguiente</button>
+                    <button type="submit" v-show="stepCounter == 4" class="bg-indigo-500 hover:bg-indigo-400 rounded-2xl p-4 font-bold text-white text-xl">Terminar</button>
+                </div>
+            </form>
+        </div>
     </div>
 </template>
 
 <script>
+class Producto{
+    constructor(obj){
+        this.nombre = obj.nombre;
+        this.descripcion = obj.descripcion;
+        this.cantidad = obj.cantidad;
+        this.fechaCaducidad = obj.fechaCaducidad;
+        this.marca = obj.marca;
+        this.proveedor = obj.proveedor;
+        this.precioCompra = obj.precioCompra;
+        this.precioVenta = obj.precioVenta;
+        this.precioMayorista = obj.precioMayorista;
+        this.cantidadMayorista = obj.cantidadMayorista;
+        this.codigoSeccion = obj.codigoSeccion;
+        this.codigoCategoria = obj.codigoCategoria;
+        this.idMedidaVenta = obj.idMedidaVenta;
+        this.unidadEquivalente = {
+            cantidadEquivalente: obj.unidadEquivalente.cantidadEquivalente,
+            idMedidaAsociada: obj.unidadEquivalente.idMedidaAsociada
+        };
+    }
+}
+
 export default {
     data(){
         return {
+            producto : new Producto({
+                nombre : "",
+                descripcion : "",
+                cantidad : null,
+                fechaCaducidad : null,
+                marca : "",
+                proveedor : "",
+                precioCompra : null,
+                precioVenta : null,
+                precioMayorista : null,
+                cantidadMayorista : null,
+                codigoSeccion : "",
+                codigoCategoria : "",
+                idMedidaVenta : "",
+                unidadEquivalente : {
+                    cantidadEquivalente: null,
+                    idMedidaAsociada: "",
+                } 
+            }),
+
             lista_productos: [],
+            lista_categorias: [],
+            lista_secciones: [],
+            lista_medidas: [],
+
+            stockState: 0,
+            stepCounter: 1,
+            modificando: false,
+            reqProducto: ""
         }
     },
     created(){
         this.obtenerProductos();
+        this.obtenerSecciones();
+        this.obtenerCategorias();
+        this.obtenerMedidasVenta();
     },
     methods: {
         obtenerProductos(){
@@ -49,7 +217,73 @@ export default {
                 .then(data => {
                     this.lista_productos = data;
                 });
-        }
+        },
+        obtenerCategorias(){
+            fetch('/api/categorias')
+                .then(res => res.json())
+                .then(data => {
+                    this.lista_categorias = data;
+                });
+        },
+        obtenerSecciones(){
+            fetch('/api/secciones')
+                .then(res => res.json())
+                .then(data => {
+                    this.lista_secciones = data;
+                })
+        },
+        obtenerMedidasVenta(){
+            fetch('/api/medidas-venta')
+                .then(res => res.json())
+                .then(data => {
+                    this.lista_medidas = data;
+                })
+        },
+
+        seleccionarProducto(id){
+            fetch('/api/productos/' + id)
+                .then(res => res.json())
+                .then(data => {
+                    console.log("Fecha Caducidad:", data.fechaCaducidad);
+                    this.producto = new Producto(data);
+                    this.reqProducto = data._id;
+                    this.modificando = true;
+                })
+        },
+        modificarProducto(){
+            this.modificando = false;
+            this.stepCounter = 1;
+            fetch('api/productos/' + this.reqProducto, {
+                method: 'PUT',
+                body:   JSON.stringify(this.producto),
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                this.obtenerProductos();
+            });
+        },
+        eliminarProducto(id){
+            fetch('/api/productos/' + id, {
+                method: 'DELETE',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                this.obtenerProductos();
+            });
+        },
+
+        goToPaso(paso){
+            this.stepCounter = this.stepCounter + paso;
+            this.stepCounter = Math.min(Math.max(this.stepCounter, 1), 4);
+        },
     }
 }
 </script>

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="container bg-white rounded-xl shadow-md p-4 px-6 mx-auto">
+        <div class="container bg-white rounded-xl shadow-md p-4 px-6 mx-auto mb-4">
             <h1 class="font-bold text-4xl">Registro de Productos</h1>
             <h3 class="text-gray-500 text-xl my-4 mb-8">¿Qué desea hacer?</h3>
             <div class="text-white font-bold text-xl sm:text-2xl text-center grid grid-cols-2 gap-x-16 gap-y-2">

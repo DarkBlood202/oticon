@@ -4,7 +4,6 @@ const path = require('path');
 const router = express.Router();
 
 router.get('/', (req, res)=>{
-    // res.sendFile(path.join(__dirname, '..', 'views', 'landing.html'))
     res.render('base.ejs', {pageTitle: "Bienvenido a Oticon"})
 });
 
@@ -25,7 +24,7 @@ router.get('/productos/registrar/nuevo', (req, res)=>{
 })
 
 router.get('/productos/registrar/importar', (req, res)=>{
-    res.render('registro-importar.ejs', {pageTitle: "Importar productos"})
+    res.render('registro-importar.ejs', {pageTitle: "Importar productos"});
 })
 
 module.exports = router;
