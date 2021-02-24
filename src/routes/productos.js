@@ -10,7 +10,11 @@ const MedidaVenta = require('../models/MedidaVenta');
 
 /********** PRODUCTOS **********/
 router.get('/productos', async(req, res)=>{
-    const productos = await Producto.find();
+    const productos = await Producto.find({},null,{
+        sort: {
+            nombre: 'asc'
+        }
+    });
     res.json(productos);
 });
 
@@ -40,7 +44,6 @@ router.delete('/productos/:id', async(req, res)=>{
         status: "Producto eliminado"
     });
 });
-
 
 /********** CATEGORIAS **********/
 router.get('/categorias', async(req, res)=>{

@@ -27,8 +27,9 @@ app.use(express.json());
 
 // Routes
 app.use('/api', require('./routes/productos'));
-app.use('/', require('./routes/routes'));
 app.use('/uploads', require('./routes/uploads'));
+app.use('/buscar', require('./routes/busquedas'));
+app.use('/', require('./routes/routes'));
 
 // Static
 app.use(express.static(path.join(__dirname, 'public')));

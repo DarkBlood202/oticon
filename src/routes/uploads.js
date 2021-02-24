@@ -3,7 +3,6 @@ const router = express.Router();
 
 const path = require('path');
 const multer = require('multer');
-const readXlsxFile = require("read-excel-file/node");
 
 const uploadExcel = multer({
     storage: multer.diskStorage({

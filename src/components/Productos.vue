@@ -2,10 +2,17 @@
     <div>
         <div v-show="!modificando" class="container bg-white rounded-xl shadow-md p-4 px-6 mx-auto">
             <h1 class="font-bold text-4xl">Productos</h1>
-            <div class="flex my-4 mb-8 gap-4">
-                <div class="bg-gray-300 px-4 py-1 rounded-full w-3/5">Buscar...</div>
-                <div class="bg-gray-300 px-4 py-1 rounded-full w-2/5">Filtros...</div>
-            </div>
+            <i class="absolute ml-2.5 mt-6 fas fa-search"></i>
+            <form class="flex my-4 mb-8 gap-4">
+                <input @input="buscarProducto" v-model="query" type="text" placeholder="Buscar..." class="rounded-full border-2 border-yellow-500 pl-7 px-4 py-1 w-3/5">
+                <select v-model="filtro" @change="filtrarProductos" class="rounded-full border-2 border-yellow-500 px-4 py-1 w-2/5">
+                    <option value="0">Filtros...</option>
+                    <option value="1">A-Z</option>
+                    <option value="2">Z-A</option>
+                    <option value="3">Por C</option>
+                    <option value="4">Por D</option>
+                </select>
+            </form>
             <div class="flex flex-nowrap overflow-x-auto">
                 <table class="bg-gray-100 rounded-3xl text-sm w-full">
                     <thead>
@@ -24,7 +31,7 @@
                             <td v-bind:class="producto.cantidad <= 100 ? ['bg-red-100', 'font-bold', 'text-red-900'] : (producto.cantidad <= 333 ? 'bg-yellow-100' : 'bg-green-100')" class="font-normal border-2 border-white px-4 text-center">{{ producto.cantidad }}</td>
                             <td class="font-normal border-2 border-white px-4 text-center">{{ producto.precioVenta.toFixed(2) }}</td>
                             <td class="font-normal border-2 border-white px-4 text-center">{{ producto.precioMayorista.toFixed(2) }} (x{{ producto.cantidadMayorista }})</td>
-                            <td class="font-normal border-2 border-white px-6 text-center"><button @click="seleccionarProducto(producto._id)" class="font-bold hover:text-gray-300 anicon">o</button></td>
+                            <td class="font-normal border-2 border-white px-6 text-center"><button @click="seleccionarProducto(producto._id)" class="font-bold hover:text-gray-300 anicon">n</button></td>
                             <td class="font-normal border-2 border-white px-6 text-center"><button @click="eliminarProducto(producto._id)" class="font-bold text-red-500 hover:text-red-300 font-mono">X</button></td>
                         </tr>
                     </tbody>
@@ -51,7 +58,7 @@
                         </div>
                         <div class="col-span-1">
                             <label class="uppercase">Fecha caducidad</label><br>
-                            <input type="date" required v-model="producto.fechaCaducidad" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
+                            <input type="date" v-model="reqFecha" required class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
                         </div>
                     </div>
                 </div>
@@ -148,6 +155,8 @@
 </template>
 
 <script>
+const moment = require('moment');
+
 class Producto{
     constructor(obj){
         this.nombre = obj.nombre;
@@ -201,7 +210,10 @@ export default {
             stockState: 0,
             stepCounter: 1,
             modificando: false,
-            reqProducto: ""
+            reqProducto: "",
+            reqFecha: null,
+            query: "",
+            filtro: 0,
         }
     },
     created(){
@@ -244,15 +256,14 @@ export default {
             fetch('/api/productos/' + id)
                 .then(res => res.json())
                 .then(data => {
-                    console.log("Fecha Caducidad:", data.fechaCaducidad);
                     this.producto = new Producto(data);
                     this.reqProducto = data._id;
+                    this.reqFecha = moment(this.producto.fechaCaducidad).format('YYYY-MM-DD');
                     this.modificando = true;
                 })
         },
         modificarProducto(){
-            this.modificando = false;
-            this.stepCounter = 1;
+            this.fixFecha();
             fetch('api/productos/' + this.reqProducto, {
                 method: 'PUT',
                 body:   JSON.stringify(this.producto),
@@ -265,6 +276,8 @@ export default {
             .then(data => {
                 this.obtenerProductos();
             });
+            this.stepCounter = 1;
+            this.modificando = false;
         },
         eliminarProducto(id){
             fetch('/api/productos/' + id, {
@@ -284,6 +297,55 @@ export default {
             this.stepCounter = this.stepCounter + paso;
             this.stepCounter = Math.min(Math.max(this.stepCounter, 1), 4);
         },
+        fixFecha(){
+            this.producto.fechaCaducidad = moment(this.reqFecha).format();
+        },
+
+        buscarProducto(){
+            if(this.query != ""){
+                fetch('/buscar/producto/' + this.query)
+                    .then(res => res.json())
+                    .then(data => {
+                        this.lista_productos = data;
+                    });
+            }
+            else{
+                this.obtenerProductos();
+            }
+        },
+        ordenarProductos(prop, orden='asc'){
+            return function innerSort(a,b){
+                if(!a.hasOwnProperty(prop) || !b.hasOwnProperty(prop)){
+                    return 0;
+                }
+            
+                const varA = (typeof a[prop] === 'string') ? a[prop].toUpperCase() : a[prop];
+                const varB = (typeof b[prop] === 'string') ? b[prop].toUpperCase() : b[prop];
+
+                let comp = 0;
+                if(varA > varB){
+                    comp = 1;
+                }
+                else if(varA < varB){
+                    comp = -1
+                }
+                return(
+                    (orden === 'desc') ? (comp * -1) : comp
+                );
+            }
+        },
+        filtrarProductos(){
+            switch(this.filtro){
+                case "0":
+                    this.obtenerProductos();
+                    break;
+                case "1":
+                    this.lista_productos.sort(this.ordenarProductos('nombre'));
+                    break;
+                case "2":
+                    this.lista_productos.sort(this.ordenarProductos('nombre', 'desc'));
+            }
+        }
     }
 }
 </script>
