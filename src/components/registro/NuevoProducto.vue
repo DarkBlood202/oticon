@@ -2,7 +2,7 @@
     <div>
         <div class="container bg-white rounded-xl shadow-md p-4 px-6 mx-auto h-screen mb-4">
             <h1 class="font-bold text-4xl">Registro de Productos</h1>
-            <h3 class="text-gray-500 text-xl my-4 mb-8">Paso {{ stepCounter }} de 4</h3>
+            <h3 class="text-gray-500 text-xl my-4 mb-8">Paso {{ stepCounter }} de {{ maxStep }}</h3>
             <form @submit.prevent="agregarProducto">
                 <div v-show="stepCounter == 1">
                     <div class="my-4">
@@ -94,8 +94,8 @@
                         <div class="grid grid-cols-9 gap-4">
                             <span class="col-span-2 block text-center">1 unidad</span>
                             <span class="col-span-1 block text-center font-bold font-xl">=</span>
-                            <input type="number" required v-model="producto.unidadEquivalente.cantidadEquivalente" step="0.001" class="col-span-3 pl-2 py-1 rounded-full border-2 border-yellow-500">
-                            <select required v-model="producto.unidadEquivalente.idMedidaAsociada" class="col-span-3 pl-2 py-1 rounded-full border-2 border-yellow-500">
+                            <input type="number" required v-model="producto.cantidadEquivalente" step="0.001" class="col-span-3 pl-2 py-1 rounded-full border-2 border-yellow-500">
+                            <select required v-model="producto.idMedidaAsociada" class="col-span-3 pl-2 py-1 rounded-full border-2 border-yellow-500">
                                 <option disabled value="">Seleccionar medida de venta</option>
                                 <option v-for="(medida, it) in lista_medidas" :key="it" v-bind:value="medida._id">
                                     {{ medida.nombre }} ({{ medida.abreviacion }})
@@ -105,11 +105,19 @@
                     </div>
                 </div>
 
+                <div v-show="stepCounter == 5">
+                    <div class="my-4">
+                        <label class="uppercase">Código de barras</label>
+                        <p class="my-4 text-justify text-xs text-gray-500">Adicionalmente puede ingresar un código de barras (si dispone de uno) para identificar sus productos.</p>
+                        <input type="text" v-model="producto.codigoBarras" class="pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
+                    </div>
+                </div>
+
                 <div class="grid grid-cols-2 gap-4 mt-10 mb-2">
                     <a href="/productos/registrar" v-show="stepCounter == 1" class="bg-red-500 hover:bg-red-400 rounded-2xl p-4 font-bold text-white text-center text-xl">Cancelar</a>
                     <button type="button" v-show="stepCounter > 1" @click="goToPaso(-1)" class="bg-yellow-500 hover:bg-yellow-400 rounded-2xl p-4 font-bold text-white text-xl">Anterior</button>
-                    <button type="button" v-show="stepCounter < 4" @click="goToPaso(1)" class="bg-yellow-500 hover:bg-yellow-400 rounded-2xl p-4 font-bold text-white text-xl">Siguiente</button>
-                    <button type="submit" v-show="stepCounter == 4" class="bg-indigo-500 hover:bg-indigo-400 rounded-2xl p-4 font-bold text-white text-xl">Terminar</button>
+                    <button type="button" v-show="stepCounter < maxStep" @click="goToPaso(1)" class="bg-yellow-500 hover:bg-yellow-400 rounded-2xl p-4 font-bold text-white text-xl">Siguiente</button>
+                    <button type="submit" v-show="stepCounter == maxStep" class="bg-indigo-500 hover:bg-indigo-400 rounded-2xl p-4 font-bold text-white text-xl">Terminar</button>
                 </div>
             </form>
         </div>
@@ -132,12 +140,10 @@ class Producto{
         this.codigoSeccion = "";
         this.codigoCategoria = "";
         this.idMedidaVenta = "";
-        this.unidadEquivalente = {
-            cantidadEquivalente: null,
-            idMedidaAsociada: ""
-        };
+        this.cantidadEquivalente = null;
+        this.idMedidaAsociada = "";
         // this.id = "";
-        // this.codigoBarras = "";
+        this.codigoBarras = "";
     }
 }
 
@@ -145,6 +151,7 @@ export default {
     data(){
         return {
             stepCounter: 1,
+            maxStep: 5,
             producto: new Producto(),
             lista_secciones: [],
             lista_categorias: [],
@@ -181,9 +188,10 @@ export default {
         },
         goToPaso(paso){
             this.stepCounter = this.stepCounter + paso;
-            this.stepCounter = Math.min(Math.max(this.stepCounter, 1), 4);
+            this.stepCounter = Math.min(Math.max(this.stepCounter, 1), this.maxStep);
         },
         agregarProducto(){
+            console.log(this.producto);
             fetch('/api/productos', {
                     method: 'POST',
                     body: JSON.stringify(this.producto),

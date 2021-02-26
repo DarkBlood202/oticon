@@ -3,6 +3,7 @@ const router = express.Router();
 
 const path = require('path');
 const multer = require('multer');
+const xlsx = require('xlsx');
 
 const uploadExcel = multer({
     storage: multer.diskStorage({
@@ -24,29 +25,31 @@ const uploadExcel = multer({
         else{
             cb("No es un archivo de Excel.", false);
         }
+    },
+    limits: {
+        fileSize: 500000,
     }
 });
 
 /********** CARGA DE HOJA DE DATOS **********/
-router.post('/excel-data', uploadExcel.single('excel-data'), (req, res)=>{
-    if(req.file == undefined){
-        return res.status(400).json(
-            {
-                status: "ERROR: Solo se admiten archivos de datos de excel"
-            }
-        );
-    }
-    else{
-        console.log(req.file);
-        console.log(req.file.path);
+router.post('/excel-data', uploadExcel.single('file'), (req, res)=>{
+    console.log(req.file);
+    console.log(req.file.path);
 
-        let productos_cargados = [];
-
-        res.json({
-            status: "Datos cargados",
-            data: productos_cargados
-        });
-    }
+    res.json({
+        file: req.file
+    });
 });
+
+router.get('/excel-data', (req, res)=>{
+    let excelFile = xlsx.readFile(path.join(__dirname, '..', 'uploads', 'excel-data.xlsx'), {
+        cellDates: true,
+    });
+    let excelSheet = excelFile.Sheets[excelFile.SheetNames[0]];
+
+    let data = xlsx.utils.sheet_to_json(excelSheet);
+    
+    res.json(data);
+})
 
 module.exports = router;

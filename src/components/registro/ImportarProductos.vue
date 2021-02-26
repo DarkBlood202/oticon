@@ -1,14 +1,11 @@
 <template>
     <div>
-        <div class="container bg-white rounded-xl shadow-md p-4 px-6 mx-auto h-screen mb-4">
+        <div class="container bg-white rounded-xl shadow-md p-4 px-6 mx-auto">
             <h1 class="font-bold text-4xl">Registro de Productos</h1>
-            <!-- <div v-show="errorFound.exists" class="bg-red-200 text-red-500 text-justify w-full">
-                <p>{{ errorFound.type }}</p>
-            </div> -->
             <div v-show="!isLoaded" class="my-8">
-                <form action="/uploads/excel-data" method=POST enctype="multipart/form-data">
+                <form @submit.prevent="cargarDatos" enctype="multipart/form-data">
                     <label class="cursor-pointer block bg-yellow-500 hover:bg-yellow-400 rounded-2xl font-bold text-center text-white text-xl p-4 py-8 w-full">
-                        <input @change="subirArchivo" class="hidden" type="file" name="excel-data" id="hoja-datos">
+                        <input @change="subirArchivo" class="hidden" type="file" ref="file" id="hoja-datos">
                         Seleccionar archivo de datos
                     </label>
                     <p class="my-4 text-justify text-xs text-gray-500">Asegúrese de que su hoja de datos sigue los parámetros establecidos para la importación correcta. Para más importación, vea <strong>Cómo importar desde una hoja de datos</strong>.</p>
@@ -37,81 +34,110 @@
                                 <th class="border-2 border-white px-4">Precio compra</th>
                                 <th class="border-2 border-white px-4">Precio venta</th>
                                 <th class="border-2 border-white px-4">Precio mayorista</th>
+                                <th class="border-2 border-white px-4">Unidad equivalente</th>
+                                <th class="border-2 border-white px-4">Código de barras</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr v-for="(producto, it) in lista_productos_cargados" :key="it">
-                                <th class="font-normal border-2 border-white px-4">{{ producto.id }}</th>
-                                <th class="font-normal border-2 border-white px-4">{{ producto.nombre }}</th>
-                                <th class="font-normal border-2 border-white px-4">{{ producto.descripcion }}</th>
-                                <th class="font-normal border-2 border-white px-4">{{ producto.cantidad }}</th>
-                                <th class="font-normal border-2 border-white px-4">{{ producto.fechaCaducidad }}</th>
-                                <th class="font-normal border-2 border-white px-4">{{ producto.marca }}</th>
-                                <th class="font-normal border-2 border-white px-4">{{ producto.proveedor }}</th>
-                                <th class="font-normal border-2 border-white px-4">{{ producto.codigoSeccion }}</th>
-                                <th class="font-normal border-2 border-white px-4">{{ producto.codigoCategoria }}</th>
-                                <th class="font-normal border-2 border-white px-4">{{ producto.idMedidaVenta}} ({{ producto.idMedidaVenta }})</th>
-                                <th class="font-normal border-2 border-white px-4">{{ producto.precioCompra }}</th>
-                                <th class="font-normal border-2 border-white px-4">{{ producto.precioVenta }}</th>
-                                <th class="font-normal border-2 border-white px-4">{{ producto.precioMayorista }} (x{{ producto.cantidadMayorista }})</th>
+                                <td class="font-normal border-2 border-white px-4 text-center">{{ producto.ID }}</td>
+                                <td class="font-normal border-2 border-white px-4 text-center">{{ producto.nombre }}</td>
+                                <td class="font-normal border-2 border-white px-4 text-center">{{ producto.descripcion }}</td>
+                                <td class="font-normal border-2 border-white px-4 text-center">{{ producto.cantidad }}</td>
+                                <td class="font-normal border-2 border-white px-4 text-center">{{ producto.fechaCaducidad.substring(0,10) }}</td>
+                                <td class="font-normal border-2 border-white px-4 text-center">{{ producto.marca }}</td>
+                                <td class="font-normal border-2 border-white px-4 text-center">{{ producto.proveedor }}</td>
+                                <td class="font-normal border-2 border-white px-4 text-center">{{ producto.codigoSeccion }}</td>
+                                <td class="font-normal border-2 border-white px-4 text-center">{{ producto.codigoCategoria }}</td>
+                                <td class="font-normal border-2 border-white px-4 text-center">{{ producto.idMedidaVenta}}</td>
+                                <td class="font-normal border-2 border-white px-4 text-center">{{ producto.precioCompra }}</td>
+                                <td class="font-normal border-2 border-white px-4 text-center">{{ producto.precioVenta }}</td>
+                                <td class="font-normal border-2 border-white px-4 text-center">{{ producto.precioMayorista }} (x{{ producto.cantidadMayorista }})</td>
+                                <td class="font-normal border-2 border-white px-4 text-center">{{ producto.cantidadEquivalente }} ({{ producto.idMedidaAsociada }})</td>
+                                <td class="font-normal border-2 border-white px-4 text-center">{{ producto.codigoBarras == "" ? "No tiene" : producto.codigoBarras }}</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-                <form>
-                    <div class="grid grid-cols-2 gap-4 mt-10 mb-2">
-                        <button type="button" @click="reintentarSubida" class="bg-yellow-500 hover:bg-yellow-400 rounded-2xl p-4 font-bold text-white text-xl">Volver</button>
-                        <button class="bg-yellow-500 hover:bg-yellow-400 rounded-2xl p-4 font-bold text-white text-xl">Importar</button>
-                    </div>
-                </form>
+                <div class="grid grid-cols-2 gap-4 mt-10 mb-2">
+                    <button @click="reintentarSubida" class="bg-yellow-500 hover:bg-yellow-400 rounded-2xl p-4 font-bold text-white text-xl">Volver</button>
+                    <button @click="confirmarImportacion" class="bg-yellow-500 hover:bg-yellow-400 rounded-2xl p-4 font-bold text-white text-xl">Importar</button>
+                </div>
             </div>
         </div>
     </div>
 </template>
 
 <script>
+const axios = require('axios');
+
 export default {
     data(){
         return {
             isLoaded: false,
             canImport: false,
-            archivoDatos: null,
-            // errorFound: {
-            //     exists: false,
-            //     type: "",
-            // },
+            archivoDatos: "",
             lista_productos_cargados: [],
+
+            lista_secciones: [],
+            lista_categorias: [],
         }
     },
     created(){
+        this.obtenerSecciones();
+        this.obtenerCategorias();
         this.isLoaded = false;
         this.canImport = false;
-        // this.errorFound.exists = false;
     },
     methods: {
+        obtenerSecciones(){
+            axios.get('/api/secciones')
+                .then(res => {
+                    this.lista_secciones = res.data;
+                });
+        },
+        obtenerCategorias(){
+            axios.get('/api/categorias')
+                .then(res => {
+                    this.lista_categorias = res.data;
+                });
+        },
+        
         subirArchivo(event){
             this.archivoDatos = event.target.files[0];
-            console.log(this.archivoDatos);
-            this.canImport = true;
+            if(this.archivoDatos){
+                this.canImport = true;
+            }
         },
         cargarDatos(){
-            console.log(this.archivoDatos);
-                        // fetch('/uploads/excel-data', {
-            //     method: 'POST',
-            //     headers: {
-            //         'Accept': 'multipart/form-data',
-            //         'Content-type': 'multipart/form-data'
-            //     },
-            //     body: this.archivoDatos
-            // })
-            // .then(res => res.json())
-            // .then(data => {
-            //     this.lista_productos_cargados = data;
-            // })
-            this.isLoaded = true;
+            const formData = new FormData();
+            formData.append('file', this.archivoDatos);
+            try{
+                axios.post('/uploads/excel-data', formData);
+            }
+            catch(err){
+                console.log(err);
+            }
+
+            axios.get('/uploads/excel-data')
+                .then(res => {
+                    this.lista_productos_cargados = res.data;
+                })
+                .then(res => this.isLoaded = true);
+        },
+        confirmarImportacion(){
+            axios.get('/uploads/excel-data').then(res => {
+                this.lista_productos_cargados = res.data;
+                this.lista_productos_cargados.forEach((p)=>{
+                    axios.post('/api/productos', p);
+                    console.log("Producto", p.nombre, "cargado.");
+                })
+            });
+            this.lista_productos_cargados = [];
         },
         reintentarSubida(){
-            /* descartar el archivo y limpiar lista de carga */
+            /* descartar el archivo */
+            this.lista_productos_cargados = [];
             this.isLoaded = false;
             this.canImport = false;
         }

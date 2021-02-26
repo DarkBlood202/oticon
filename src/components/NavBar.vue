@@ -1,7 +1,7 @@
 <template>
     <div>
         <!-- Menu -->
-        <div v-show="menu" class="bg-white w-screen h-screen">
+        <div v-show="menu" class="bg-white w-full h-full">
             <div class="bg-yellow-500 text-white px-4 py-3 w-full flex flex-row-reverse">
                 <button @click="cerrarMenu" class="font-bold text-2xl sm:px-2">✕</button>
                 <span class="flex-shrink-0 flex-grow font-bold text-2xl">Menú</span>
@@ -27,7 +27,7 @@
         </div>
 
         <!-- TopBar -->
-        <nav v-show="!menu" class="bg-yellow-500 text-white px-4 py-2 mb-4 w-full">
+        <nav v-show="!menu" class="bg-yellow-500 text-white px-4 py-2 w-full mb-4">
             <div class="flex gap-4 items-center">
                 <a href="/" class="flex-grow font-bold text-2xl">OTICON</a>
                 <div class="flex-shrink-0">Usuario</div>
