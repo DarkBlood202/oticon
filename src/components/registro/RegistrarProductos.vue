@@ -3,14 +3,20 @@
         <div class="container bg-white rounded-xl shadow-md p-4 px-6 mx-auto mb-4">
             <h1 class="font-bold text-4xl">Registro de Productos</h1>
             <h3 class="text-gray-500 text-xl my-4 mb-8">¿Qué desea hacer?</h3>
-            <div class="text-white font-bold text-xl sm:text-2xl text-center grid grid-cols-2 gap-x-16 gap-y-2">
-                <a href="/productos/registrar/nuevo" class="col-span-2 sm:col-span-1 bg-yellow-500 hover:bg-yellow-400 rounded-2xl p-4 sm:px-8 py-10 sm:py-32 my-4 anicon">
+            <div class="text-white font-bold text-xl text-center sm:text-2xl grid grid-cols-3 grid-rows-3 gap-4 my-4">
+                <a href="/productos/registrar/nuevo" class="col-span-2 row-span-2 bg-yellow-500 hover:bg-yellow-400 rounded-2xl anicon">
                     <span class="text-4xl">a</span><br>
-                    <span class="font-sans">Deseo registrar un nuevo producto</span>
+                    <span class="font-sans">Registrar nuevo producto</span>
                 </a>
-                <a href="/productos/registrar/importar" class="col-span-2 sm:col-span-1 bg-yellow-500 hover:bg-yellow-400 rounded-2xl p-4 sm:px-8 py-10 sm:py-32 my-4 anicon">
+                <a href="/productos/registrar/seccion" class="col-span-1 row-span-1 bg-yellow-500 hover:bg-yellow-400 rounded-2xl">
+                    <span class=""><i class="fas fa-grip-horizontal"></i><br>Nueva sección</span>
+                </a>
+                <a href="/productos/registrar/categoria" class="col-span-1 row-span-1 bg-yellow-500 hover:bg-yellow-400 rounded-2xl">
+                    <span class=""><i class="fas fa-th-list"></i><br>Nueva categoría</span>
+                </a>
+                <a href="/productos/registrar/importar" class="col-span-3 row-span-1 bg-yellow-500 hover:bg-yellow-400 rounded-2xl anicon">
                     <span class="text-4xl">c</span><br>
-                    <span class="font-sans">Deseo importar productos desde una hoja de datos</span>
+                    <span class="font-sans">Importar productos desde una hoja de datos</span>
                 </a>
             </div>
         </div>

@@ -21,13 +21,17 @@ const Producto = new Schema({
     cantidadEquivalente: Number,
     idMedidaAsociada: String,
 
-    codigoBarras: String,
+    codigoBarras: {
+        type: String,
+        unique: true,
+        sparse: true,
+    },
 
-    // id: {
-    //     type: String,
-    //     index: true,
-    //     unique: true,
-    // },
+    idProducto: {
+        type: String,
+        unique: true,
+    },
+
 }, {
     collection: 'productos'
 });

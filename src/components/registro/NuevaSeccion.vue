@@ -12,8 +12,8 @@
                     <input type="text" required v-model="seccion.codigo" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
                 </div>
                 <div class="grid grid-cols-2 gap-4 mt-10 mb-2">
-                    <button type="button" class="bg-red-500 hover:bg-red-400 rounded-2xl p-4 font-bold text-white text-xl">Cancelar</button>
-                    <button type="submit" class="bg-indigo-500 hover:bg-indigo-400 rounded-2xl p-4 font-bold text-white text-xl">Terminar</button>
+                    <a href="/productos/registrar" class="col-span-1 mt-8 bg-red-500 hover:bg-red-400 rounded-2xl p-4 font-bold text-center text-white text-xl">Cancelar</a>
+                    <button type="submit" class="col-span-1 col-end-3 mt-8 bg-indigo-500 hover:bg-indigo-400 rounded-2xl p-4 font-bold text-white text-xl">Terminar</button>
                 </div>
             </form>
         </div>

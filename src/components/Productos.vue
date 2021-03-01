@@ -183,6 +183,7 @@ class Producto{
         this.cantidadEquivalente = obj.cantidadEquivalente;
         this.idMedidaAsociada = obj.idMedidaAsociada;
         this.codigoBarras = obj.codigoBarras;
+        this.idProducto = obj.idProducto;
     }
 }
 
@@ -203,10 +204,10 @@ export default {
                 codigoSeccion : "",
                 codigoCategoria : "",
                 idMedidaVenta : "",
-                unidadEquivalente : {
-                    cantidadEquivalente: null,
-                    idMedidaAsociada: "",
-                } 
+                cantidadEquivalente: null,
+                idMedidaAsociada: "",
+                codigoBarras: null,
+                idProducto: ""
             }),
 
             lista_productos: [],
@@ -281,6 +282,7 @@ export default {
         },
         modificarProducto(){
             this.fixFecha();
+            this.producto.idProducto = this.producto.codigoSeccion + this.producto.codigoCategoria + this.producto.idProducto.slice(4);
             fetch('api/productos/' + this.reqProducto, {
                 method: 'PUT',
                 body:   JSON.stringify(this.producto),

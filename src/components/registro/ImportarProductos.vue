@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="container bg-white rounded-xl shadow-md p-4 px-6 mx-auto">
-            <h1 class="font-bold text-4xl">Registro de Productos</h1>
+            <h1 class="font-bold text-4xl">Importar productos</h1>
             <div v-show="!isLoaded" class="my-8">
                 <form @submit.prevent="cargarDatos" enctype="multipart/form-data">
                     <label class="cursor-pointer block bg-yellow-500 hover:bg-yellow-400 rounded-2xl font-bold text-center text-white text-xl p-4 py-8 w-full">
@@ -40,7 +40,7 @@
                         </thead>
                         <tbody>
                             <tr v-for="(producto, it) in lista_productos_cargados" :key="it">
-                                <td class="font-normal border-2 border-white px-4 text-center">{{ producto.ID }}</td>
+                                <td class="font-normal border-2 border-white px-4 text-center">{{ producto.idProducto ? producto.idProducto : "-- No definido --" }}</td>
                                 <td class="font-normal border-2 border-white px-4 text-center">{{ producto.nombre }}</td>
                                 <td class="font-normal border-2 border-white px-4 text-center">{{ producto.descripcion }}</td>
                                 <td class="font-normal border-2 border-white px-4 text-center">{{ producto.cantidad }}</td>
@@ -70,6 +70,7 @@
 
 <script>
 const axios = require('axios');
+const moment = require('moment');
 
 export default {
     data(){
@@ -129,6 +130,14 @@ export default {
             axios.get('/uploads/excel-data').then(res => {
                 this.lista_productos_cargados = res.data;
                 this.lista_productos_cargados.forEach((p)=>{
+                    if(p.idProducto == "" | p.idProducto == undefined | p.idProducto == null){
+                        console.log("Producto", p.nombre, "no cuenta con un id. Se generará automáticamente.")
+                        p.idProducto = p.codigoSeccion + p.codigoCategoria + moment(new Date()).format('x');
+                        console.log("id generado es:", p.idProducto);
+                    }
+                    else{
+                        console.log("Producto", p.nombre, "tiene id.");
+                    }
                     axios.post('/api/productos', p);
                     console.log("Producto", p.nombre, "cargado.");
                 })

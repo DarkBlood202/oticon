@@ -21,6 +21,12 @@ router.get('/producto/:q', async(req, res)=>{
                     "$options": "i",
                 }
             },
+            {
+                idProducto: {
+                    "$regex": req.params.q,
+                    "$options": "i",
+                }
+            },
         ]
     })
 

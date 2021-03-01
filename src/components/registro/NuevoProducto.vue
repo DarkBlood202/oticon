@@ -125,6 +125,8 @@
 </template>
 
 <script>
+const moment = require('moment');
+
 class Producto{
     constructor(){
         this.nombre = "";
@@ -142,8 +144,8 @@ class Producto{
         this.idMedidaVenta = "";
         this.cantidadEquivalente = null;
         this.idMedidaAsociada = "";
-        // this.id = "";
-        this.codigoBarras = "";
+        this.codigoBarras = null;
+        this.idProducto = "";
     }
 }
 
@@ -191,7 +193,7 @@ export default {
             this.stepCounter = Math.min(Math.max(this.stepCounter, 1), this.maxStep);
         },
         agregarProducto(){
-            console.log(this.producto);
+            this.producto.idProducto = this.producto.codigoSeccion + this.producto.codigoCategoria + moment().format('x');
             fetch('/api/productos', {
                     method: 'POST',
                     body: JSON.stringify(this.producto),
