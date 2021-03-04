@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="container bg-white rounded-xl shadow-md p-4 px-6 mx-auto h-screen mb-4">
+        <div class="container bg-white rounded-xl shadow-md p-4 px-6 mx-auto mb-4">
             <h1 class="font-bold text-4xl">Registro de Productos</h1>
             <h3 class="text-gray-500 text-xl my-4 mb-8">Paso {{ stepCounter }} de {{ maxStep }}</h3>
             <form @submit.prevent="agregarProducto">

@@ -1,5 +1,8 @@
 import Vue from 'vue';
+
 import NavBar from './components/NavBar.vue';
+import DesktopMenu from './components/DesktopMenu.vue';
+
 import Productos from './components/Productos.vue';
 
 import RegistrarProductos from './components/registro/RegistrarProductos.vue';
@@ -13,6 +16,11 @@ new Vue({
     el: '#nav',
     render: h => h(NavBar),
 });
+
+new Vue({
+    el: '#desktop-menu',
+    render: h => h(DesktopMenu),
+})
 
 new Vue({
     el: "#product-table",

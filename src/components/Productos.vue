@@ -223,6 +223,7 @@ export default {
             reqFecha: null,
             query: "",
             filtro: 0,
+            stockRevisado: false,
         }
     },
     created(){
@@ -230,6 +231,7 @@ export default {
         this.obtenerSecciones();
         this.obtenerCategorias();
         this.obtenerMedidasVenta();
+        this.revisarStock();
     },
     methods: {
         obtenerProductos(){
@@ -237,7 +239,6 @@ export default {
                 .then(res => res.json())
                 .then(data => {
                     this.lista_productos = data;
-                    this.revisarStock();
                 })
         },
         obtenerCategorias(){
@@ -245,6 +246,9 @@ export default {
                 .then(res => res.json())
                 .then(data => {
                     this.lista_categorias = data;
+                    // if(!this.stockRevisado){
+                    //     this.revisarStock()
+                    // }
                 });
         },
         obtenerSecciones(){
@@ -262,9 +266,10 @@ export default {
                 })
         },
         revisarStock(){
-            for(let i=0; i < this.lista_productos.length - 1; i++){
+            for(let i=0; i < this.lista_productos.length; i++){
                 if(this.lista_productos[i].cantidad < 100){
-                    alert("Tiene productos bajos en stock, tome sus precauciones.");
+                    alert("Stock de productos bajo.");
+                    this.stockRevisado = true;
                     return;
                 }
             }

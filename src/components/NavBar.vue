@@ -27,11 +27,11 @@
         </div>
 
         <!-- TopBar -->
-        <nav v-show="!menu" class="bg-yellow-500 text-white px-4 py-2 w-full mb-4">
+        <nav v-show="!menu" class="bg-yellow-500 text-white px-4 py-2 w-full mb-4 lg:mb-0">
             <div class="flex gap-4 items-center">
                 <a href="/" class="flex-grow font-bold text-2xl">OTICON</a>
                 <div class="flex-shrink-0">Usuario</div>
-                <button @click="abrirMenu" class="font-bold text-4xl sm:px-2 anicon">E</button>
+                <button @click="abrirMenu" class="font-bold text-4xl sm:px-2 anicon lg:hidden">E</button>
             </div>
         </nav>
     </div>
