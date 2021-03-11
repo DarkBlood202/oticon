@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
+const AutoIncrement = require('mongoose-sequence')(mongoose);
 
 const connectionString = "mongodb+srv://dber:dber@oticon.tahsk.mongodb.net/oticon?retryWrites=true&w=majority";
 

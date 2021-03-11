@@ -17,20 +17,24 @@
                 <table class="bg-gray-100 rounded-3xl text-sm w-full">
                     <thead>
                         <tr>
+                            <th class="border-2 border-white px-4">ID</th>
                             <th class="border-2 border-white px-4">Nombre</th>
                             <th class="border-2 border-white px-4">Cantidad</th>
+                            <th class="border-2 border-white px-4">Precio compra</th>
                             <th class="border-2 border-white px-4">Precio venta</th>
-                            <th class="border-2 border-white px-4">Precio mayorista</th>
+                            <th class="border-2 border-white px-4">Fecha caducidad</th>
                             <th class="border-2 border-white px-4"></th>
                             <th class="border-2 border-white px-4"></th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr v-for="(producto, it) in lista_productos" :key="it">
+                            <td class="font-normal border-2 border-white px-4 text-center">{{ producto.idProducto }}</td>
                             <td class="font-normal border-2 border-white px-4 text-center">{{ producto.nombre }}</td>
                             <td v-bind:class="producto.cantidad <= 100 ? ['bg-red-100', 'font-bold', 'text-red-900'] : (producto.cantidad <= 333 ? 'bg-yellow-100' : 'bg-green-100')" class="font-normal border-2 border-white px-4 text-center">{{ producto.cantidad }}</td>
-                            <td class="font-normal border-2 border-white px-4 text-center">{{ producto.precioVenta.toFixed(2) }}</td>
-                            <td class="font-normal border-2 border-white px-4 text-center">{{ producto.precioMayorista.toFixed(2) }} (x{{ producto.cantidadMayorista }})</td>
+                            <td class="font-normal border-2 border-white px-4 text-center">{{ producto.precioCompra ? producto.precioCompra.toFixed(2) : "NO-DEFINIDO-" }}</td>
+                            <td class="font-normal border-2 border-white px-4 text-center">{{ producto.precioVenta  ? producto.precioVenta.toFixed(2) : "-NO DEFINIDO-" }} (x{{ producto.cantidadMayorista }})</td>
+                            <td class="font-normal border-2 border-white px-4 text-center">{{ producto.fechaCaducidad.substring(0,10) }}</td>
                             <td class="font-normal border-2 border-white px-6 text-center"><button @click="seleccionarProducto(producto._id)" class="font-bold hover:text-gray-300 anicon">n</button></td>
                             <td class="font-normal border-2 border-white px-6 text-center"><button @click="eliminarProducto(producto._id)" class="font-bold text-red-500 hover:text-red-300 font-mono">X</button></td>
                         </tr>
@@ -67,11 +71,21 @@
                     <div class="grid grid-cols-2 gap-8 my-4">
                         <div class="col-span-1">
                             <label class="uppercase">Marca</label><br>
-                            <input type="text" required v-model="producto.marca" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
+                            <select required v-model="producto.codigoMarca" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
+                                <option disabled value="">Seleccionar marca</option>
+                                <option v-for="(marca, it) in lista_marcas" :key="it" v-bind:value="marca.codigo">
+                                    {{ marca.codigo }}: {{ marca.nombre }}
+                                </option>
+                            </select>
                         </div>
                         <div class="col-span-1">
                             <label class="uppercase">Proveedor</label><br>
-                            <input type="text" required v-model="producto.proveedor" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
+                            <select required v-model="producto.codigoProveedor" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
+                                <option disabled value="">Seleccionar proveedor</option>
+                                <option v-for="(proveedor, it) in lista_proveedores" :key="it" v-bind:value="proveedor.codigo">
+                                    {{ proveedor.codigo }}: {{ proveedor.nombre }}
+                                </option>
+                            </select>
                         </div>
                     </div>
                     <div class="my-4">
@@ -171,15 +185,19 @@ class Producto{
         this.descripcion = obj.descripcion;
         this.cantidad = obj.cantidad;
         this.fechaCaducidad = obj.fechaCaducidad;
-        this.marca = obj.marca;
-        this.proveedor = obj.proveedor;
+
+        this.codigoMarca = obj.marca;
+        this.codigoProveedor = obj.proveedor;
+
         this.precioCompra = obj.precioCompra;
         this.precioVenta = obj.precioVenta;
         this.precioMayorista = obj.precioMayorista;
         this.cantidadMayorista = obj.cantidadMayorista;
+
         this.codigoSeccion = obj.codigoSeccion;
         this.codigoCategoria = obj.codigoCategoria;
         this.idMedidaVenta = obj.idMedidaVenta;
+
         this.cantidadEquivalente = obj.cantidadEquivalente;
         this.idMedidaAsociada = obj.idMedidaAsociada;
         this.codigoBarras = obj.codigoBarras;
@@ -195,14 +213,18 @@ export default {
                 descripcion : "",
                 cantidad : null,
                 fechaCaducidad : null,
-                marca : "",
-                proveedor : "",
+
+                codigoMarca : null,
+                codigoProveedor : null,
+
                 precioCompra : null,
                 precioVenta : null,
                 precioMayorista : null,
                 cantidadMayorista : null,
-                codigoSeccion : "",
-                codigoCategoria : "",
+
+                codigoSeccion : null,
+                codigoCategoria : null,
+
                 idMedidaVenta : "",
                 cantidadEquivalente: null,
                 idMedidaAsociada: "",
@@ -211,6 +233,8 @@ export default {
             }),
 
             lista_productos: [],
+            lista_marcas: [],
+            lista_proveedores: [],
             lista_categorias: [],
             lista_secciones: [],
             lista_medidas: [],
@@ -228,12 +252,28 @@ export default {
     },
     created(){
         this.obtenerProductos();
+        this.obtenerMarcas();
+        this.obtenerProveedores();
         this.obtenerSecciones();
         this.obtenerCategorias();
         this.obtenerMedidasVenta();
         this.revisarStock();
     },
     methods: {
+        obtenerMarcas(){
+            fetch('/api/marcas')
+                .then(res => res.json())
+                .then(data => {
+                    this.lista_marcas = data;
+                });
+        },
+        obtenerProveedores(){
+            fetch('/api/proveedores')
+                .then(res => res.json())
+                .then(data => {
+                    this.lista_proveedores = data;
+                });
+        },
         obtenerProductos(){
             fetch('/api/productos')
                 .then(res => res.json())

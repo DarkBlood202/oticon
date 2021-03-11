@@ -6,8 +6,10 @@ const Producto = new Schema({
     descripcion: String,
     cantidad: Number,
     fechaCaducidad: Date,
-    marca: String,
-    proveedor: String,
+
+    codigoMarca: String,
+    codigoProveedor: String,
+
     precioCompra: Number,
     precioVenta: Number,
     precioMayorista: Number,
@@ -17,7 +19,6 @@ const Producto = new Schema({
     codigoCategoria: String,
     idMedidaVenta: String,
 
-    
     cantidadEquivalente: Number,
     idMedidaAsociada: String,
 

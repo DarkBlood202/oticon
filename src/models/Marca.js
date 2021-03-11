@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const AutoIncrement = require('mongoose-sequence')(mongoose);
 const { Schema } = mongoose;
 
-const Seccion = new Schema({
+const Marca = new Schema({
     codigo: {
         type: Number,
         index: true,
@@ -10,9 +10,9 @@ const Seccion = new Schema({
     },
     nombre: String,
 }, {
-    collection: 'secciones',
+    collection: 'marcas',
 });
 
-Seccion.plugin(AutoIncrement, {id: 'contador_codigo_seccion', inc_field: 'codigo'});
+Marca.plugin(AutoIncrement, {id: 'contador_codigo_marca', inc_field: 'codigo'});
 
-module.exports = mongoose.model('Seccion', Seccion);
+module.exports = mongoose.model('Marca', Marca);

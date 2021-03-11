@@ -3,9 +3,12 @@ const router = express.Router();
 
 
 const Producto = require('../models/Producto');
+const Marca = require('../models/Marca');
+const Proovedor = require('../models/Proveedor');
 const Categoria = require('../models/Categoria');
 const Seccion = require('../models/Seccion');
 const MedidaVenta = require('../models/MedidaVenta');
+const Proveedor = require('../models/Proveedor');
 
 
 /********** PRODUCTOS **********/
@@ -42,6 +45,90 @@ router.delete('/productos/:id', async(req, res)=>{
     await Producto.findByIdAndDelete(req.params.id);
     res.json({
         status: "Producto eliminado"
+    });
+});
+
+/********** MARCA **********/
+router.get('/marcas', async(req, res)=>{
+    const marcas = await Marca.find();
+    res.json(marcas);
+});
+
+router.post('/marcas', async(req, res)=>{
+    const marca = new Marca(req.body);
+    try {
+        await marca.save();
+        res.json({
+            status: "Marca registrada"
+        });
+    }
+    catch (err) {
+        res.json({
+            status: "Marca no registrada",
+            error: err,
+        });
+    }
+    
+})
+
+router.get('/marcas/:codigo', async(req, res)=>{
+    const marca = await Marca.find(req.params);
+    res.json(marca);
+});
+
+router.put('/marcas/:codigo', async(req, res)=>{
+    await Marca.findOneAndUpdate(req.params, req.body);
+    res.json({
+        status: "Marca modificada"
+    });
+});
+
+router.delete('/marcas/:codigo', async(req, res)=>{
+    await Marca.findOneAndDelete(req.params);
+    res.json({
+        status: "Marca eliminada"
+    });
+});
+
+/********** PROVEEDORES **********/
+router.get('/proveedores', async(req, res)=>{
+    const proveedores = await Proveedor.find();
+    res.json(proveedores);
+});
+
+router.post('/proveedores', async(req, res)=>{
+    const proveedor = new Proveedor(req.body);
+    try {
+        await proveedor.save();
+        res.json({
+            status: "Proveedor registrada"
+        });
+    }
+    catch (err) {
+        res.json({
+            status: "Proveedor no registrado",
+            error: err,
+        });
+    }
+    
+})
+
+router.get('/proveedores/:codigo', async(req, res)=>{
+    const proveedor = await Proveedor.find(req.params);
+    res.json(proveedor);
+});
+
+router.put('/proveedores/:codigo', async(req, res)=>{
+    await Proveedor.findOneAndUpdate(req.params, req.body);
+    res.json({
+        status: "Proveedor modificado",
+    });
+});
+
+router.delete('/proveedores/:codigo', async(req, res)=>{
+    await Proveedor.findOneAndDelete(req.params);
+    res.json({
+        status: "Proveedor eliminado"
     });
 });
 

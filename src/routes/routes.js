@@ -27,12 +27,4 @@ router.get('/productos/registrar/importar', (req, res)=>{
     res.render('registro-importar.ejs', {pageTitle: "Importar productos"});
 });
 
-router.get('/productos/registrar/seccion', (req, res)=>{
-    res.render('registro-seccion.ejs', {pageTitle: "Nueva sección"});
-});
-
-router.get('/productos/registrar/categoria', (req, res)=>{
-    res.render('registro-categoria.ejs', {pageTitle: "Nueva categoría"});
-});
-
 module.exports = router;
