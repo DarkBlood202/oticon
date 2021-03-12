@@ -45,8 +45,8 @@
                                 <td class="font-normal border-2 border-white px-4 text-center">{{ producto.descripcion }}</td>
                                 <td class="font-normal border-2 border-white px-4 text-center">{{ producto.cantidad }}</td>
                                 <td class="font-normal border-2 border-white px-4 text-center">{{ producto.fechaCaducidad.substring(0,10) }}</td>
-                                <td class="font-normal border-2 border-white px-4 text-center">{{ producto.marca }}</td>
-                                <td class="font-normal border-2 border-white px-4 text-center">{{ producto.proveedor }}</td>
+                                <td class="font-normal border-2 border-white px-4 text-center">{{ producto.codigoMarca }}</td>
+                                <td class="font-normal border-2 border-white px-4 text-center">{{ producto.codigoProveedor }}</td>
                                 <td class="font-normal border-2 border-white px-4 text-center">{{ producto.codigoSeccion }}</td>
                                 <td class="font-normal border-2 border-white px-4 text-center">{{ producto.codigoCategoria }}</td>
                                 <td class="font-normal border-2 border-white px-4 text-center">{{ producto.idMedidaVenta}}</td>
@@ -132,7 +132,9 @@ export default {
                 this.lista_productos_cargados.forEach((p)=>{
                     if(p.idProducto == "" | p.idProducto == undefined | p.idProducto == null){
                         console.log("Producto", p.nombre, "no cuenta con un id. Se generará automáticamente.")
-                        p.idProducto = p.codigoSeccion + p.codigoCategoria + moment(new Date()).format('x');
+                        let codigoSeccionF = ("00" + p.codigoSeccion).slice(-3);
+                        let codigoCategoriaF = ("00" + p.codigoCategoria).slice(-3);
+                        p.idProducto = codigoSeccionF + codigoCategoriaF + moment(new Date()).format('x');
                         console.log("id generado es:", p.idProducto);
                     }
                     else{

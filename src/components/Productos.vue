@@ -1,16 +1,16 @@
 <template>
     <div>
-        <div v-show="!modificando" class="container bg-white rounded-xl shadow-md p-4 px-6 mx-auto">
+        <div v-show="!modificando && !onNew" class="container bg-white rounded-xl shadow-md p-4 px-6 mx-auto">
             <h1 class="font-bold text-4xl">Productos</h1>
             <i class="absolute ml-2.5 mt-6 fas fa-search"></i>
             <form class="flex my-4 mb-8 gap-4">
-                <input @input="buscarProducto" v-model="query" type="text" placeholder="Buscar..." class="rounded-full border-2 border-yellow-500 pl-7 px-4 py-1 w-3/5">
+                <input @input="buscarProducto" v-model="query" type="text" placeholder="Buscar por nombre, id, código..." class="rounded-full border-2 border-yellow-500 pl-7 px-4 py-1 w-3/5">
                 <select v-model="filtro" @change="filtrarProductos" class="rounded-full border-2 border-yellow-500 px-4 py-1 w-2/5">
-                    <option value="0">Filtros...</option>
+                    <option value="0">Ordenar por...</option>
                     <option value="1">A-Z</option>
                     <option value="2">Z-A</option>
-                    <option value="3">Por C</option>
-                    <option value="4">Por D</option>
+                    <option value="3">Mayor a menor precio</option>
+                    <option value="4">Menor a mayor precio</option>
                 </select>
             </form>
             <div class="flex flex-nowrap overflow-x-auto">
@@ -34,15 +34,48 @@
                             <td v-bind:class="producto.cantidad <= 100 ? ['bg-red-100', 'font-bold', 'text-red-900'] : (producto.cantidad <= 333 ? 'bg-yellow-100' : 'bg-green-100')" class="font-normal border-2 border-white px-4 text-center">{{ producto.cantidad }}</td>
                             <td class="font-normal border-2 border-white px-4 text-center">{{ producto.precioCompra ? producto.precioCompra.toFixed(2) : "NO-DEFINIDO-" }}</td>
                             <td class="font-normal border-2 border-white px-4 text-center">{{ producto.precioVenta  ? producto.precioVenta.toFixed(2) : "-NO DEFINIDO-" }} (x{{ producto.cantidadMayorista }})</td>
-                            <td class="font-normal border-2 border-white px-4 text-center">{{ producto.fechaCaducidad.substring(0,10) }}</td>
+                            <td class="font-normal border-2 border-white px-4 text-center">{{ (producto.fechaCaducidad.substring(0,10)).split("-").reverse().join("/") }}</td>
                             <td class="font-normal border-2 border-white px-6 text-center"><button @click="seleccionarProducto(producto._id)" class="font-bold hover:text-gray-300 anicon">n</button></td>
                             <td class="font-normal border-2 border-white px-6 text-center"><button @click="eliminarProducto(producto._id)" class="font-bold text-red-500 hover:text-red-300 font-mono">X</button></td>
                         </tr>
                     </tbody>
                 </table>
             </div>
+            <div class="container my-4">
+                <div class="flex gap-4">
+                    <div class="flex-auto text-center">
+                        <div class="inline-block mr-2 w-6 h-4 bg-green-100"></div>
+                        <span class="text-gray-400 text-sm">Stock disponible</span>
+                    </div>
+                    <div class="flex-auto text-center">
+                        <div class="inline-block mr-2 w-6 h-4 bg-yellow-100"></div>
+                        <span class="text-gray-400 text-sm">Stock regular</span>
+                    </div>
+                    <div class="flex-auto text-center">
+                        <div class="inline-block mr-2 w-6 h-4 bg-red-100"></div>
+                        <span class="text-gray-400 text-sm">Stock muy bajo</span>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <div class="container mt-4">
+                <div class="flex gap-4">
+                    <div class="flex-auto text-center">
+                        <div class="inline-block mr-2 w-6 h-4 bg-green-100"></div>
+                        <span class="text-gray-400 text-sm">En buen estado</span>
+                    </div>
+                    <div class="flex-auto text-center">
+                        <div class="inline-block mr-2 w-6 h-4 bg-yellow-100"></div>
+                        <span class="text-gray-400 text-sm">Próximo a caducar</span>
+                    </div>
+                    <div class="flex-auto text-center">
+                        <div class="inline-block mr-2 w-6 h-4 bg-red-100"></div>
+                        <span class="text-gray-400 text-sm">Caducando</span>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div v-show="modificando" class="container bg-white rounded-xl shadow-md p-4 px-6 mx-auto mb-4">
+        <div v-show="modificando && !onNew" class="container bg-white rounded-xl shadow-md p-4 px-6 mx-auto mb-4">
             <h1 class="font-bold text-4xl">Modificar productos</h1>
             <h3 class="text-gray-500 text-xl my-4 mb-8">Paso {{ stepCounter }} de {{ maxStep }}</h3>
             <form @submit.prevent="modificarProducto()">
@@ -70,7 +103,7 @@
                 <div v-show="stepCounter == 2">
                     <div class="grid grid-cols-2 gap-8 my-4">
                         <div class="col-span-1">
-                            <label class="uppercase">Marca</label><br>
+                            <label class="uppercase">Marca</label><i @click="newMarca = onNew = true" class="ml-4 fas fa-plus-circle hover:text-gray-400 cursor-pointer"></i><br>
                             <select required v-model="producto.codigoMarca" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
                                 <option disabled value="">Seleccionar marca</option>
                                 <option v-for="(marca, it) in lista_marcas" :key="it" v-bind:value="marca.codigo">
@@ -79,7 +112,7 @@
                             </select>
                         </div>
                         <div class="col-span-1">
-                            <label class="uppercase">Proveedor</label><br>
+                            <label class="uppercase">Proveedor</label><i @click="newProveedor = onNew = true" class="ml-4 fas fa-plus-circle hover:text-gray-400 cursor-pointer"></i><br>
                             <select required v-model="producto.codigoProveedor" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
                                 <option disabled value="">Seleccionar proveedor</option>
                                 <option v-for="(proveedor, it) in lista_proveedores" :key="it" v-bind:value="proveedor.codigo">
@@ -89,7 +122,7 @@
                         </div>
                     </div>
                     <div class="my-4">
-                        <label class="uppercase">Seccion</label><br>
+                        <label class="uppercase">Seccion</label><i @click="newSeccion = onNew = true" class="ml-4 fas fa-plus-circle hover:text-gray-400 cursor-pointer"></i><br>
                         <select required v-model="producto.codigoSeccion" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
                             <option aria-disabled="" value="">Seleccionar sección</option>
                             <option v-for="(seccion, it) in lista_secciones" :key="it" v-bind:value="seccion.codigo">
@@ -98,7 +131,7 @@
                         </select>
                     </div>
                     <div class="my-4">
-                        <label class="uppercase">Categoria</label><br>
+                        <label class="uppercase">Categoria</label><i @click="newCategoria = onNew = true" class="ml-4 fas fa-plus-circle hover:text-gray-400 cursor-pointer"></i><br>
                         <select required v-model="producto.codigoCategoria" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
                             <option disabled value="">Seleccionar categoría</option>
                             <option v-for="(categoria, it) in lista_categorias" :key="it" v-bind:value="categoria.codigo">
@@ -110,7 +143,7 @@
 
                 <div v-show="stepCounter == 3">
                     <div class="my-4">
-                        <label class="uppercase">Medida de venta</label><br>
+                        <label class="uppercase">Medida de venta</label><i @click="newMedida = onNew = true" class="ml-4 fas fa-plus-circle hover:text-gray-400 cursor-pointer"></i><br>
                         <select required v-model="producto.idMedidaVenta" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
                             <option disabled value="">Seleccionar medida de venta</option>
                             <option v-for="(medida, it) in lista_medidas" :key="it" v-bind:value="medida._id">
@@ -173,6 +206,91 @@
                 </div>
             </form>
         </div>
+
+        <div v-show="onNew && newMarca">
+            <div class="container bg-white rounded-xl shadow-md p-4 px-6 mx-auto mb-4">
+                <h1 class="font-bold text-4xl">Agregar marca</h1>
+                <form @submit.prevent="agregarMarca">
+                    <div class="my-4">
+                        <label class="uppercase">Nombre</label>
+                        <input type="text" required v-model="p_marca.nombre" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 mt-10 mb-2">
+                        <button type="button" @click="newMarca = onNew = false" class="bg-red-500 hover:bg-red-400 rounded-2xl p-4 font-bold text-white text-xl">Cancelar</button>
+                        <button type="submit" class="bg-indigo-500 hover:bg-indigo-400 rounded-2xl p-4 font-bold text-white text-xl">Agregar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div v-show="onNew && newProveedor">
+            <div class="container bg-white rounded-xl shadow-md p-4 px-6 mx-auto mb-4">
+                <h1 class="font-bold text-4xl">Agregar proveedor</h1>
+                <form @submit.prevent="agregarProveedor">
+                    <div class="my-4">
+                        <label class="uppercase">Nombre</label>
+                        <input type="text" required v-model="p_proveedor.nombre" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 mt-10 mb-2">
+                        <button type="button" @click="newProveedor = onNew = false" class="bg-red-500 hover:bg-red-400 rounded-2xl p-4 font-bold text-white text-xl">Cancelar</button>
+                        <button type="submit" class="bg-indigo-500 hover:bg-indigo-400 rounded-2xl p-4 font-bold text-white text-xl">Agregar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div v-show="onNew && newSeccion">
+            <div class="container bg-white rounded-xl shadow-md p-4 px-6 mx-auto mb-4">
+                <h1 class="font-bold text-4xl">Agregar sección</h1>
+                <form @submit.prevent="agregarSeccion">
+                    <div class="my-4">
+                        <label class="uppercase">Nombre</label>
+                        <input type="text" required v-model="p_seccion.nombre" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 mt-10 mb-2">
+                        <button type="button" @click="newSeccion = onNew = false" class="bg-red-500 hover:bg-red-400 rounded-2xl p-4 font-bold text-white text-xl">Cancelar</button>
+                        <button type="submit" class="bg-indigo-500 hover:bg-indigo-400 rounded-2xl p-4 font-bold text-white text-xl">Agregar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div v-show="onNew && newCategoria">
+            <div class="container bg-white rounded-xl shadow-md p-4 px-6 mx-auto mb-4">
+                <h1 class="font-bold text-4xl">Agregar categoría</h1>
+                <form @submit.prevent="agregarCategoria">
+                    <div class="my-4">
+                        <label class="uppercase">Nombre</label>
+                        <input type="text" required v-model="p_categoria.nombre" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 mt-10 mb-2">
+                        <button type="button" @click="newCategoria = onNew = false" class="bg-red-500 hover:bg-red-400 rounded-2xl p-4 font-bold text-white text-xl">Cancelar</button>
+                        <button type="submit" class="bg-indigo-500 hover:bg-indigo-400 rounded-2xl p-4 font-bold text-white text-xl">Agregar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div v-show="onNew && newMedida">
+            <div class="container bg-white rounded-xl shadow-md p-4 px-6 mx-auto mb-4">
+                <h1 class="font-bold text-4xl">Agregar medida de venta</h1>
+                <form @submit.prevent="agregarMedidaVenta">
+                    <div class="my-4">
+                        <label class="uppercase">Nombre</label>
+                        <input type="text" required v-model="p_medidaVenta.nombre" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
+                    </div>
+                    <div class="my-4">
+                        <label class="uppercase">Abreviación</label>
+                        <input type="text" required v-model="p_medidaVenta.abreviacion" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 mt-10 mb-2">
+                        <button type="button" @click="newMedida = onNew = false" class="bg-red-500 hover:bg-red-400 rounded-2xl p-4 font-bold text-white text-xl">Cancelar</button>
+                        <button type="submit" class="bg-indigo-500 hover:bg-indigo-400 rounded-2xl p-4 font-bold text-white text-xl">Agregar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
     </div>
 </template>
 
@@ -186,8 +304,8 @@ class Producto{
         this.cantidad = obj.cantidad;
         this.fechaCaducidad = obj.fechaCaducidad;
 
-        this.codigoMarca = obj.marca;
-        this.codigoProveedor = obj.proveedor;
+        this.codigoMarca = obj.codigoMarca;
+        this.codigoProveedor = obj.codigoProveedor;
 
         this.precioCompra = obj.precioCompra;
         this.precioVenta = obj.precioVenta;
@@ -228,9 +346,22 @@ export default {
                 idMedidaVenta : "",
                 cantidadEquivalente: null,
                 idMedidaAsociada: "",
-                codigoBarras: null,
+                codigoBarras: undefined,
                 idProducto: ""
             }),
+
+            onNew: false,
+            newMarca: false,
+            newProveedor: false,
+            newSeccion: false,
+            newCategoria: false,
+            newMedida: false,
+
+            p_marca: {},
+            p_proveedor: {},
+            p_seccion: {},
+            p_categoria: {},
+            p_medidaVenta: {},
 
             lista_productos: [],
             lista_marcas: [],
@@ -315,6 +446,92 @@ export default {
             }
         },
 
+        agregarMarca(){
+            fetch('/api/marcas', {
+                method: 'POST',
+                body: JSON.stringify(this.p_marca),
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                this.p_marca = {};
+                this.newMarca = false;
+                this.onNew = false;
+                this.obtenerMarcas();
+            })
+        },
+        agregarProveedor(){
+            fetch('/api/proveedores', {
+                method: 'POST',
+                body: JSON.stringify(this.p_proveedor),
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                this.p_proveedor = {};
+                this.newProveedor = false;
+                this.onNew = false;
+                this.obtenerProveedores();
+            })
+        },
+        agregarSeccion(){
+            fetch('/api/secciones', {
+                method: 'POST',
+                body: JSON.stringify(this.p_seccion),
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                this.p_seccion = {};
+                this.newSeccion = false;
+                this.onNew = false;
+                this.obtenerSecciones();
+            })
+        },
+        agregarCategoria(){
+            fetch('/api/categorias', {
+                method: 'POST',
+                body: JSON.stringify(this.p_categoria),
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                this.p_categoria = {};
+                this.newCategoria = false;
+                this.onNew = false;
+                this.obtenerCategorias();
+            })
+        },
+        agregarMedidaVenta(){
+            fetch('/api/medidas-venta', {
+                method: 'POST',
+                body: JSON.stringify(this.p_medidaVenta),
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                this.p_medidaVenta = {};
+                this.newMedida = false;
+                this.onNew = false;
+                this.obtenerMedidasVenta();
+            })
+        },
+
         seleccionarProducto(id){
             fetch('/api/productos/' + id)
                 .then(res => res.json())
@@ -327,7 +544,9 @@ export default {
         },
         modificarProducto(){
             this.fixFecha();
-            this.producto.idProducto = this.producto.codigoSeccion + this.producto.codigoCategoria + this.producto.idProducto.slice(4);
+            let codigoSeccionF = ("00" + this.producto.codigoSeccion).slice(-3);
+            let codigoCategoriaF = ("00" + this.producto.codigoCategoria).slice(-3);
+            this.producto.idProducto = codigoSeccionF + codigoCategoriaF + this.producto.idProducto.slice(4);
             fetch('api/productos/' + this.reqProducto, {
                 method: 'PUT',
                 body:   JSON.stringify(this.producto),

@@ -323,7 +323,10 @@ export default {
             this.stepCounter = Math.min(Math.max(this.stepCounter, 1), this.maxStep);
         },
         agregarProducto(){
-            this.producto.idProducto = this.producto.codigoSeccion + this.producto.codigoCategoria + moment().format('x');
+            let codigoSeccionF = ("00" + this.producto.codigoSeccion).slice(-3);
+            let codigoCategoriaF = ("00" + this.producto.codigoCategoria).slice(-3);
+            this.producto.idProducto = codigoSeccionF + codigoCategoriaF + moment().format('x');
+            console.log("Seccion", this.producto.codigoSeccion, "Categoria", this.producto.codigoCategoria);
             fetch('/api/productos', {
                     method: 'POST',
                     body: JSON.stringify(this.producto),
