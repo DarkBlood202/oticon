@@ -5,10 +5,14 @@ import DesktopMenu from './components/DesktopMenu.vue';
 
 import Productos from './components/Productos.vue';
 
-import RegistrarProductos from './components/registro/RegistrarProductos.vue';
 import NuevoProducto from './components/registro/NuevoProducto.vue';
 import ImportarProductos from './components/registro/ImportarProductos.vue';
 
+import Marcas from './components/registro/Marcas.vue';
+import Proveedores from './components/registro/Proveedores.vue';
+import Secciones from './components/registro/Secciones.vue';
+import Categorias from './components/registro/Categorias.vue';
+import MedidasVenta from './components/registro/MedidasVenta.vue';
 
 new Vue({
     el: '#nav',
@@ -26,11 +30,6 @@ new Vue({
 });
 
 new Vue({
-    el: "#register-view",
-    render: h => h(RegistrarProductos),
-});
-
-new Vue({
     el: "#register-single-product",
     render: h => h(NuevoProducto),
 });
@@ -38,4 +37,29 @@ new Vue({
 new Vue({
     el: "#import-products",
     render: h => h(ImportarProductos),
+});
+
+new Vue({
+    el: "#marcas-view",
+    render: h => h(Marcas),
+});
+
+new Vue({
+    el: "#proveedores-view",
+    render: h => h(Proveedores),
+});
+
+new Vue({
+    el: "#secciones-view",
+    render: h => h(Secciones),
+});
+
+new Vue({
+    el: "#categorias-view",
+    render: h => h(Categorias),
+});
+
+new Vue({
+    el: "#medidas-view",
+    render: h => h(MedidasVenta),
 });

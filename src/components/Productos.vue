@@ -378,7 +378,6 @@ export default {
             reqFecha: null,
             query: "",
             filtro: 0,
-            stockRevisado: false,
         }
     },
     created(){
@@ -388,7 +387,6 @@ export default {
         this.obtenerSecciones();
         this.obtenerCategorias();
         this.obtenerMedidasVenta();
-        this.revisarStock();
     },
     methods: {
         obtenerMarcas(){
@@ -417,9 +415,6 @@ export default {
                 .then(res => res.json())
                 .then(data => {
                     this.lista_categorias = data;
-                    // if(!this.stockRevisado){
-                    //     this.revisarStock()
-                    // }
                 });
         },
         obtenerSecciones(){
@@ -435,15 +430,6 @@ export default {
                 .then(data => {
                     this.lista_medidas = data;
                 })
-        },
-        revisarStock(){
-            for(let i=0; i < this.lista_productos.length; i++){
-                if(this.lista_productos[i].cantidad < 100){
-                    alert("Stock de productos bajo.");
-                    this.stockRevisado = true;
-                    return;
-                }
-            }
         },
 
         agregarMarca(){

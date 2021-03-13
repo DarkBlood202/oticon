@@ -8,6 +8,11 @@ Oticon es un sistema de punto de venta (POS) basado en la web.
 + Eliminación de productos registrados.
 ---
 # Notas de versión
+## Versión 0.12
++ Agregadas vistas de creación, modificación y eliminación para "Categoría", "Sección", "Marca", "Proveedor" y "Medida de Venta".
++ Corregido tamaño de área activa del enlace a *home* desde barra de navegación.
++ Agregada ruta de modificación de campos a barra de navegación.
+
 ## Versión 0.11
 + Campo "ID de producto" se actualiza correctamente al modificarse "Categoría" y "Sección".
 + Agregada leyenda de colores para stock en vista de lista de productos.
