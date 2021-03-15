@@ -41,7 +41,7 @@
                     </tbody>
                 </table>
             </div>
-            <div class="container my-4">
+            <div class="container mt-4">
                 <div class="flex gap-4">
                     <div class="flex-auto text-center">
                         <div class="inline-block mr-2 w-6 h-4 bg-green-100"></div>
@@ -53,11 +53,11 @@
                     </div>
                     <div class="flex-auto text-center">
                         <div class="inline-block mr-2 w-6 h-4 bg-red-100"></div>
-                        <span class="text-gray-400 text-sm">Stock muy bajo</span>
+                        <span class="text-gray-400 text-sm">Stock bajo</span>
                     </div>
                 </div>
             </div>
-            <hr>
+            <!-- <hr>
             <div class="container mt-4">
                 <div class="flex gap-4">
                     <div class="flex-auto text-center">
@@ -73,7 +73,7 @@
                         <span class="text-gray-400 text-sm">Caducando</span>
                     </div>
                 </div>
-            </div>
+            </div> -->
         </div>
         <div v-show="modificando && !onNew" class="container bg-white rounded-xl shadow-md p-4 px-6 mx-auto mb-4">
             <h1 class="font-bold text-4xl">Modificar productos</h1>
