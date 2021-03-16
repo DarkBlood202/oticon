@@ -1,5 +1,18 @@
 <template>
     <div>
+
+        <div v-show="registerOK && !registerError" class="slide-out-right p-4 absolute bottom-4 right-4 rounded-xl bg-green-100 text-green-700 text-center">
+            <i class="w-full far fa-check-circle text-4xl font-bold"></i>
+            <h1 class="font-bold">¡Importación exitosa!</h1>
+            <p>Los productos se han importado correctamente.</p>
+        </div>
+
+        <div v-show="registerError && !registerOK" class="slide-out-right p-4 absolute bottom-4 right-4 rounded-xl bg-red-100 text-red-700 text-center">
+            <i class="w-full far fa-times-circle text-4xl font-bold"></i>
+            <h1 class="font-bold">Ha ocurrido un error</h1>
+            <p>Verifica los datos introducidos y que el archivo sea del formato correcto.</p>
+        </div>
+
         <div class="container bg-white rounded-xl shadow-md p-4 px-6 mx-auto">
             <h1 class="font-bold text-4xl">Importar productos</h1>
             <div v-show="!isLoaded" class="my-8">
@@ -77,6 +90,10 @@ export default {
         return {
             isLoaded: false,
             canImport: false,
+
+            registerOK: false,
+            registerError: false,
+
             archivoDatos: "",
             lista_productos_cargados: [],
 
@@ -124,7 +141,9 @@ export default {
                 .then(res => {
                     this.lista_productos_cargados = res.data;
                 })
-                .then(res => this.isLoaded = true);
+                .then(res => {
+                    this.isLoaded = true;
+                });
         },
         confirmarImportacion(){
             axios.get('/uploads/excel-data').then(res => {
@@ -140,11 +159,23 @@ export default {
                     else{
                         console.log("Producto", p.nombre, "tiene id.");
                     }
-                    axios.post('/api/productos', p);
+                    axios.post('/api/productos', p)
+                        .then(res => {
+                            if(res.ok){
+                                this.registerError = false;
+                                this.registerOK = true;
+                                this.canImport = false;
+                                this.isLoaded = false;
+                                return res.json();
+                            }
+                            else{
+                                this.registerOK = false;
+                                this.registerError = true;
+                            }
+                        });
                     console.log("Producto", p.nombre, "cargado.");
-                })
+                });
             });
-            this.lista_productos_cargados = [];
         },
         reintentarSubida(){
             /* descartar el archivo */
