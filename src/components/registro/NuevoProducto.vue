@@ -139,7 +139,7 @@
                 <div class="grid grid-cols-2 gap-4 mt-10 mb-2">
                     <a href="/productos/registrar" v-show="stepCounter == 1" class="bg-red-500 hover:bg-red-400 rounded-2xl p-4 font-bold text-white text-center text-xl">Cancelar</a>
                     <button type="button" v-show="stepCounter > 1" @click="goToPaso(-1)" class="bg-yellow-500 hover:bg-yellow-400 rounded-2xl p-4 font-bold text-white text-xl">Anterior</button>
-                    <button type="button" v-show="stepCounter < maxStep" @click="goToPaso(1)" class="bg-yellow-500 hover:bg-yellow-400 rounded-2xl p-4 font-bold text-white text-xl">Siguiente</button>
+                    <button type="button" v-show="stepCounter < maxStep" @click="goToPaso(1)" v-bind:class="nextIsDisabled ? ['bg-gray-300', 'hover:bg-gray-300', 'text-gray-200', 'cursor-not-allowed'] : ['bg-yellow-500', 'hover:bg-yellow-400']" class="rounded-2xl p-4 font-bold text-white text-xl">Siguiente</button>
                     <button type="submit" v-show="stepCounter == maxStep" class="bg-indigo-500 hover:bg-indigo-400 rounded-2xl p-4 font-bold text-white text-xl">Terminar</button>
                 </div>
             </form>
@@ -274,11 +274,13 @@ export default {
             newSeccion: false,
             newCategoria: false,
             newMedida: false,
+            nextIsDisabled: true,
 
             registerError: false,
             registerOK: false,
             OKOut: false,
             errOut: false,
+            nextIsDisabled: true,
 
             p_marca: {},
             p_proveedor: {},
@@ -300,6 +302,8 @@ export default {
         this.obtenerSecciones();
         this.obtenerCategorias();
         this.obtenerMedidasVenta();
+
+        this.interval = setInterval(() => this.validacion(), 100);
     },
     methods: {
         obtenerMarcas(){
@@ -339,8 +343,70 @@ export default {
         },
 
         goToPaso(paso){
+            if(paso == 1 && this.nextIsDisabled){
+                return;
+            }
             this.stepCounter = this.stepCounter + paso;
             this.stepCounter = Math.min(Math.max(this.stepCounter, 1), this.maxStep);
+        },
+
+        validacion(){
+            switch(this.stepCounter){
+                case 1:
+                    if(
+                        this.producto.nombre &&
+                        this.producto.descripcion &&
+                        this.producto.cantidad
+                    ){
+                        this.nextIsDisabled = false;
+                    }
+                    else{
+                        this.nextIsDisabled = true;
+                    }
+                    break;
+                
+                case 2:
+                    if(
+                        this.producto.codigoMarca &&
+                        this.producto.codigoProveedor &&
+                        this.producto.codigoSeccion &&
+                        this.producto.codigoCategoria
+                    ){
+                        this.nextIsDisabled = false;
+                    }
+                    else{
+                        this.nextIsDisabled = true;
+                    }
+                    break;
+
+                case 3:
+                    if(
+                        this.producto.idMedidaVenta &&
+                        this.producto.precioCompra &&
+                        this.producto.precioVenta &&
+                        this.producto.precioMayorista &&
+                        this.producto.cantidadMayorista
+                    ){
+                        this.nextIsDisabled = false;
+                    }
+                    else{
+                        this.nextIsDisabled = true;
+                    }
+                    break;
+
+                case 4:
+                    if(
+                        this.producto.cantidadEquivalente &&
+                        this.producto.idMedidaAsociada
+                    ){
+                        this.nextIsDisabled = false;
+                    }
+                    else{
+                        this.nextIsDisabled = true;
+                    }
+                    break;
+
+            }
         },
 
         agregarProducto(){

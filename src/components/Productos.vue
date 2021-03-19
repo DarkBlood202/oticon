@@ -356,6 +356,7 @@ export default {
             newSeccion: false,
             newCategoria: false,
             newMedida: false,
+            nextIsDisabled: true,
 
             p_marca: {},
             p_proveedor: {},
@@ -387,6 +388,8 @@ export default {
         this.obtenerSecciones();
         this.obtenerCategorias();
         this.obtenerMedidasVenta();
+
+        this.interval = setInterval(() => this.validacion(), 100);
     },
     methods: {
         obtenerMarcas(){
@@ -532,7 +535,7 @@ export default {
             this.fixFecha();
             let codigoSeccionF = ("00" + this.producto.codigoSeccion).slice(-3);
             let codigoCategoriaF = ("00" + this.producto.codigoCategoria).slice(-3);
-            this.producto.idProducto = codigoSeccionF + codigoCategoriaF + this.producto.idProducto.slice(4);
+            this.producto.idProducto = codigoSeccionF + codigoCategoriaF + this.producto.idProducto.slice(6);
             fetch('api/productos/' + this.reqProducto, {
                 method: 'PUT',
                 body:   JSON.stringify(this.producto),
@@ -563,12 +566,74 @@ export default {
         },
 
         goToPaso(paso){
+            if(paso == 1 && this.nextIsDisabled){
+                return;
+            }
             this.stepCounter = this.stepCounter + paso;
             this.stepCounter = Math.min(Math.max(this.stepCounter, 1), this.maxStep);
+        },
+        validacion(){
+            switch(this.stepCounter){
+                case 1:
+                    if(
+                        this.producto.nombre &&
+                        this.producto.descripcion &&
+                        this.producto.cantidad
+                    ){
+                        this.nextIsDisabled = false;
+                    }
+                    else{
+                        this.nextIsDisabled = true;
+                    }
+                    break;
+                
+                case 2:
+                    if(
+                        this.producto.codigoMarca &&
+                        this.producto.codigoProveedor &&
+                        this.producto.codigoSeccion &&
+                        this.producto.codigoCategoria
+                    ){
+                        this.nextIsDisabled = false;
+                    }
+                    else{
+                        this.nextIsDisabled = true;
+                    }
+                    break;
+
+                case 3:
+                    if(
+                        this.producto.idMedidaVenta &&
+                        this.producto.precioCompra &&
+                        this.producto.precioVenta &&
+                        this.producto.precioMayorista &&
+                        this.producto.cantidadMayorista
+                    ){
+                        this.nextIsDisabled = false;
+                    }
+                    else{
+                        this.nextIsDisabled = true;
+                    }
+                    break;
+
+                case 4:
+                    if(
+                        this.producto.cantidadEquivalente &&
+                        this.producto.idMedidaAsociada
+                    ){
+                        this.nextIsDisabled = false;
+                    }
+                    else{
+                        this.nextIsDisabled = true;
+                    }
+                    break;
+
+            }
         },
         fixFecha(){
             this.producto.fechaCaducidad = moment(this.reqFecha).format();
         },
+
 
         buscarProducto(){
             if(this.query != ""){
