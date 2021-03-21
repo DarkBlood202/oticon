@@ -30,8 +30,8 @@
                     <div class="my-4">
                         <label class="uppercase">Nombre</label>
                         <input type="text" @input="buscarProveedorExacto" required v-model="proveedor.nombre" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
-                        <label v-if="showRed" v-bind:class="!exists ? ['hidden'] : ['block', 'text-xs','text-red-500', 'uppercase']">Proveedor ya existente.</label>
-                        <label v-if="showRed" v-bind:class="proveedor.nombre ? ['hidden'] : ['block', 'text-xs','text-red-500', 'uppercase']">Proveedor no puede quedar vacía.</label>
+                        <label v-if="showRed" v-bind:class="!exists ? ['hidden'] : ['block', 'text-xs','text-red-500']">Proveedor ya existente.</label>
+                        <label v-if="showRed" v-bind:class="proveedor.nombre ? ['hidden'] : ['block', 'text-xs','text-red-500']">Proveedor no puede quedar vacía.</label>
                     </div>
                     <div class="grid grid-cols-2 gap-4 mt-10 mb-2">
                         <button type="button" @click="modificando = false" class="bg-red-500 hover:bg-red-400 rounded-2xl p-4 font-bold text-white text-xl">Cancelar</button>
@@ -47,8 +47,8 @@
                     <div class="my-4">
                         <label class="uppercase">Nombre</label>
                         <input type="text" @input="buscarProveedorExacto" required v-model="n_proveedor.nombre" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
-                        <label v-if="showRed" v-bind:class="!exists ? ['hidden'] : ['block', 'text-xs','text-red-500', 'uppercase']">Proveedor ya existente.</label>
-                        <label v-if="showRed" v-bind:class="n_proveedor.nombre ? ['hidden'] : ['block', 'text-xs','text-red-500', 'uppercase']">Proveedor no puede quedar vacía.</label>
+                        <label v-if="showRed" v-bind:class="!exists ? ['hidden'] : ['block', 'text-xs','text-red-500']">Proveedor ya existente.</label>
+                        <label v-if="showRed" v-bind:class="n_proveedor.nombre ? ['hidden'] : ['block', 'text-xs','text-red-500']">Proveedor no puede quedar vacía.</label>
                     </div>
                     <div class="grid grid-cols-2 gap-4 mt-10 mb-2">
                         <button type="button" @click="agregando = false" class="bg-red-500 hover:bg-red-400 rounded-2xl p-4 font-bold text-white text-xl">Cancelar</button>

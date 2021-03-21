@@ -21,20 +21,20 @@
                     <div class="my-4">
                         <label class="uppercase">Nombre</label><br>
                         <input type="text" required v-model="producto.nombre" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
-                        <label v-if="showRed" v-bind:class="producto.nombre ? ['hidden'] : ['block', 'text-xs','text-red-500', 'uppercase']">Nombre no puede quedar vacío.</label>
+                        <label v-if="showRed" v-bind:class="producto.nombre ? ['hidden'] : ['block', 'text-xs','text-red-500']">Nombre no puede quedar vacío.</label>
                     </div>
                     <div class="my-4">
                         <label class="uppercase">Descripcion</label><br>
                         <input type="text" required v-model="producto.descripcion" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
-                        <label v-if="showRed" v-bind:class="producto.descripcion ? ['hidden'] : ['block', 'text-xs','text-red-500', 'uppercase']">Descripción no puede quedar vacía.</label>
+                        <label v-if="showRed" v-bind:class="producto.descripcion ? ['hidden'] : ['block', 'text-xs','text-red-500']">Descripción no puede quedar vacía.</label>
                     </div>
                     <div class="grid grid-cols-2 gap-4 my-4">
                         <div class="col-span-1">
                             <label class="uppercase">Cantidad</label><br>
                             <input type="number" min="0" required v-model="producto.cantidad" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
-                            <label v-if="showRed" v-bind:class="producto.cantidad ? ['hidden'] : ['block', 'text-xs','text-red-500', 'uppercase']">Cantidad no puede quedar vacía.</label>
-                            <label v-if="showRed" v-bind:class="producto.cantidad >= 0 ? ['hidden'] : ['block', 'text-xs','text-red-500', 'uppercase']">Cantidad no puede ser negativa.</label>
-                            <label v-if="showRed" v-bind:class="producto.cantidad == parseInt(producto.cantidad, 10) ? ['hidden'] : ['block', 'text-xs','text-red-500', 'uppercase']">Cantidad solo puede tomar valores enteros.</label>
+                            <label v-if="showRed" v-bind:class="producto.cantidad ? ['hidden'] : ['block', 'text-xs','text-red-500']">Cantidad no puede quedar vacía.</label>
+                            <label v-if="showRed" v-bind:class="producto.cantidad >= 0 ? ['hidden'] : ['block', 'text-xs','text-red-500']">Cantidad no puede ser negativa.</label>
+                            <label v-if="showRed" v-bind:class="producto.cantidad == parseInt(producto.cantidad, 10) ? ['hidden'] : ['block', 'text-xs','text-red-500']">Cantidad solo puede tomar valores enteros.</label>
                         </div>
                         <div class="col-span-1">
                             <label class="uppercase">Fecha caducidad</label><br>
@@ -72,7 +72,7 @@
                                 {{ seccion.codigo }}: {{ seccion.nombre }}
                             </option>
                         </select>
-                        <label v-if="showRed" v-bind:class="producto.codigoSeccion ? ['hidden'] : ['block', 'text-xs','text-red-500', 'uppercase']">Sección no puede quedar vacía.</label>
+                        <label v-if="showRed" v-bind:class="producto.codigoSeccion ? ['hidden'] : ['block', 'text-xs','text-red-500']">Sección no puede quedar vacía.</label>
                     </div>
                     <div class="my-4">
                         <label class="uppercase">Categoria</label><i @click="newCategoria = onNew = true" class="ml-4 fas fa-plus-circle hover:text-gray-400 cursor-pointer"></i><br>
@@ -82,7 +82,7 @@
                                 {{ categoria.codigo }}: {{ categoria.nombre }}
                             </option>
                         </select>
-                        <label v-if="showRed" v-bind:class="producto.codigoCategoria ? ['hidden'] : ['block', 'text-xs','text-red-500', 'uppercase']">Categoría no puede quedar vacía.</label>
+                        <label v-if="showRed" v-bind:class="producto.codigoCategoria ? ['hidden'] : ['block', 'text-xs','text-red-500']">Categoría no puede quedar vacía.</label>
                     </div>
                 </div>
 
@@ -95,21 +95,21 @@
                                 {{ medida.nombre }} ({{ medida.abreviacion }})
                             </option>
                         </select>
-                        <label v-if="showRed" v-bind:class="producto.idMedidaVenta ? ['hidden'] : ['block', 'text-xs','text-red-500', 'uppercase']">Medida de venta no puede quedar vacía.</label>
+                        <label v-if="showRed" v-bind:class="producto.idMedidaVenta ? ['hidden'] : ['block', 'text-xs','text-red-500']">Medida de venta no puede quedar vacía.</label>
                     </div>
                     <div class="grid grid-cols-2 gap-8 my-4">
                         <div class="col-span-1">
                             <label class="uppercase">Precio compra</label><br>
                             <input type="number" min="0.01" required v-model="producto.precioCompra" step="0.01" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
-                            <label v-if="showRed" v-bind:class="producto.precioCompra ? ['hidden'] : ['block', 'text-xs','text-red-500', 'uppercase']">Precio de compra no puede quedar vacío.</label>
-                            <label v-if="showRed" v-bind:class="producto.precioCompra >= 0 ? ['hidden'] : ['block', 'text-xs','text-red-500', 'uppercase']">Precio de compra no puede ser negativo.</label>
+                            <label v-if="showRed" v-bind:class="producto.precioCompra ? ['hidden'] : ['block', 'text-xs','text-red-500']">Precio de compra no puede quedar vacío.</label>
+                            <label v-if="showRed" v-bind:class="producto.precioCompra >= 0 ? ['hidden'] : ['block', 'text-xs','text-red-500']">Precio de compra no puede ser negativo.</label>
                         </div>
                         <div class="col-span-1">
                             <label class="uppercase">Precio venta</label><br>
                             <input type="number" min="0.01" required v-model="producto.precioVenta" step="0.01" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
-                            <label v-if="showRed" v-bind:class="producto.precioVenta ? ['hidden'] : ['block', 'text-xs','text-red-500', 'uppercase']">Precio de venta no puede quedar vacío.</label>
-                            <label v-if="showRed" v-bind:class="parseFloat(producto.precioVenta) > parseFloat(producto.precioCompra) ? ['hidden'] : ['block', 'text-xs','text-red-500', 'uppercase']">Precio de venta debe ser mayor a precio de compra.</label>
-                            <label v-if="showRed" v-bind:class="producto.precioVenta >= 0 ? ['hidden'] : ['block', 'text-xs','text-red-500', 'uppercase']">Precio de venta no puede ser negativo.</label>
+                            <label v-if="showRed" v-bind:class="producto.precioVenta ? ['hidden'] : ['block', 'text-xs','text-red-500']">Precio de venta no puede quedar vacío.</label>
+                            <label v-if="showRed" v-bind:class="parseFloat(producto.precioVenta) > parseFloat(producto.precioCompra) ? ['hidden'] : ['block', 'text-xs','text-red-500']">Precio de venta debe ser mayor a precio de compra.</label>
+                            <label v-if="showRed" v-bind:class="producto.precioVenta >= 0 ? ['hidden'] : ['block', 'text-xs','text-red-500']">Precio de venta no puede ser negativo.</label>
                         </div>
                     </div>
                     <div class="my-4">
