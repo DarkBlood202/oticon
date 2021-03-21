@@ -1,16 +1,16 @@
 <template>
     <div>
-        <div v-show="!modificando && !onNew" class="container bg-white rounded-xl shadow-md p-4 px-6 mx-auto">
+        <div v-show="!modificando && !onNew" class="container bg-white rounded-xl shadow-md p-4 px-6 mx-auto mb-4">
             <h1 class="font-bold text-4xl">Productos</h1>
             <i class="absolute ml-2.5 mt-6 fas fa-search"></i>
             <form class="flex my-4 mb-8 gap-4">
                 <input @input="buscarProducto" v-model="query" type="text" placeholder="Buscar por nombre, id, código..." class="rounded-full border-2 border-yellow-500 pl-7 px-4 py-1 w-3/5">
                 <select v-model="filtro" @change="filtrarProductos" class="rounded-full border-2 border-yellow-500 px-4 py-1 w-2/5">
                     <option value="0">Ordenar por...</option>
+                    <option value="3">ID ascendente</option>
+                    <option value="4">ID descendente</option>
                     <option value="1">A-Z</option>
                     <option value="2">Z-A</option>
-                    <option value="3">Mayor a menor precio</option>
-                    <option value="4">Menor a mayor precio</option>
                 </select>
             </form>
             <div class="flex flex-nowrap overflow-x-auto">
@@ -29,7 +29,7 @@
                     </thead>
                     <tbody>
                         <tr v-for="(producto, it) in lista_productos" :key="it">
-                            <td class="font-normal border-2 border-white px-4 text-center">{{ producto.idProducto }}</td>
+                            <td class="font-normal border-2 border-white px-4 text-center">{{ ("0000" + producto.idProducto).slice(-5) }}</td>
                             <td class="font-normal border-2 border-white px-4 text-center">{{ producto.nombre }}</td>
                             <td v-bind:class="producto.cantidad <= 100 ? ['bg-red-100', 'font-bold', 'text-red-900'] : (producto.cantidad <= 333 ? 'bg-yellow-100' : 'bg-green-100')" class="font-normal border-2 border-white px-4 text-center">{{ producto.cantidad }}</td>
                             <td class="font-normal border-2 border-white px-4 text-center">{{ producto.precioCompra ? producto.precioCompra.toFixed(2) : "-NO DEFINIDO-" }}</td>
@@ -57,23 +57,6 @@
                     </div>
                 </div>
             </div>
-            <!-- <hr>
-            <div class="container mt-4">
-                <div class="flex gap-4">
-                    <div class="flex-auto text-center">
-                        <div class="inline-block mr-2 w-6 h-4 bg-green-100"></div>
-                        <span class="text-gray-400 text-sm">En buen estado</span>
-                    </div>
-                    <div class="flex-auto text-center">
-                        <div class="inline-block mr-2 w-6 h-4 bg-yellow-100"></div>
-                        <span class="text-gray-400 text-sm">Próximo a caducar</span>
-                    </div>
-                    <div class="flex-auto text-center">
-                        <div class="inline-block mr-2 w-6 h-4 bg-red-100"></div>
-                        <span class="text-gray-400 text-sm">Caducando</span>
-                    </div>
-                </div>
-            </div> -->
         </div>
         <div v-show="modificando && !onNew" class="container bg-white rounded-xl shadow-md p-4 px-6 mx-auto mb-4">
             <h1 class="font-bold text-4xl">Modificar productos</h1>
@@ -360,7 +343,7 @@ export default {
                 cantidadEquivalente: null,
                 idMedidaAsociada: "",
                 codigoBarras: undefined,
-                idProducto: ""
+                idProducto: null
             }),
 
             onNew: false,
@@ -699,6 +682,13 @@ export default {
                     break;
                 case "2":
                     this.lista_productos.sort(this.ordenarProductos('nombre', 'desc'));
+                    break;
+                case "3":
+                    this.lista_productos.sort(this.ordenarProductos('idProducto', 'asc'));
+                    break;
+                case "4":
+                    this.lista_productos.sort(this.ordenarProductos('idProducto', 'desc'));
+                    break;
             }
         }
     }

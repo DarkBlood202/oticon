@@ -1,13 +1,13 @@
 <template>
     <div>
 
-        <div v-show="registerOK && !registerError && !onNew" class="slide-out-right p-4 absolute bottom-4 right-4 rounded-xl bg-green-100 text-green-700 text-center">
+        <div v-if="registerOK && !registerError && !onNew" class="slide-out-right p-4 absolute bottom-4 right-4 rounded-xl bg-green-100 text-green-700 text-center">
             <i class="w-full far fa-check-circle text-4xl font-bold"></i>
             <h1 class="font-bold">¡Registro exitoso!</h1>
             <p>El producto se ha registrado correctamente.</p>
         </div>
 
-        <div v-show="registerError && !registerOK && !onNew" class="slide-out-right p-4 absolute bottom-4 right-4 rounded-xl bg-red-100 text-red-700 text-center">
+        <div v-if="registerError && !registerOK && !onNew" class="slide-out-right p-4 absolute bottom-4 right-4 rounded-xl bg-red-100 text-red-700 text-center">
             <i class="w-full far fa-times-circle text-4xl font-bold"></i>
             <h1 class="font-bold">Ha ocurrido un error</h1>
             <p>Verifica que los datos introducidos sean correctos.</p>
@@ -270,7 +270,7 @@ class Producto{
         this.cantidadEquivalente = null;
         this.idMedidaAsociada = "";
         this.codigoBarras = undefined;
-        this.idProducto = "";
+        this.idProducto = null;
     }
 }
 
@@ -295,6 +295,7 @@ export default {
             errOut: false,
             nextIsDisabled: true,
             showRed: false,
+            notifAnim: false,
 
             p_marca: {},
             p_proveedor: {},
@@ -419,9 +420,9 @@ export default {
         },
 
         agregarProducto(){
-            let codigoSeccionF = ("00" + this.producto.codigoSeccion).slice(-3);
-            let codigoCategoriaF = ("00" + this.producto.codigoCategoria).slice(-3);
-            this.producto.idProducto = codigoSeccionF + codigoCategoriaF + moment().format('x');
+            // let codigoSeccionF = ("00" + this.producto.codigoSeccion).slice(-3);
+            // let codigoCategoriaF = ("00" + this.producto.codigoCategoria).slice(-3);
+            // this.producto.idProducto = codigoSeccionF + codigoCategoriaF + moment().format('x');
             fetch('/api/productos', {
                     method: 'POST',
                     body: JSON.stringify(this.producto),
@@ -433,7 +434,7 @@ export default {
                 .then(res => {
                     if(res.ok){
                         this.registerError = false;
-                        this.registerOK = true;
+                        this.registerOK = true;                        
                         return res.json();
                     }
                     else{
@@ -443,6 +444,10 @@ export default {
                 })
                 .then(data => {
                     this.producto = new Producto();
+                    setTimeout(()=>{
+                        this.registerError = false;
+                        this.registerOK = false;
+                    }, 6000);
                 });
             this.stepCounter = 1;
         },

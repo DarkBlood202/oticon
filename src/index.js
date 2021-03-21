@@ -30,6 +30,7 @@ app.use(express.json());
 app.use('/api', require('./routes/productos'));
 app.use('/uploads', require('./routes/uploads'));
 app.use('/buscar', require('./routes/busquedas'));
+app.use('/faq', require('./routes/faq'));
 app.use('/', require('./routes/routes'));
 
 // Static

@@ -8,6 +8,13 @@ Oticon es un sistema de punto de venta (POS) basado en la web.
 + Eliminación de productos registrados.
 ---
 # Notas de versión
+## Versión 0.16
++ Corregido error en el cual la notificación de estado de registro de producto dejaba de mostrarse al registrar inmediatamente un nuevo producto.
++ Campo "ID de producto" es ahora autoincremental (formato de 5 dígitos).
++ Agregado indicador de carga de datos en módulo de importación de productos.
++ Agregada ruta "Cómo importar desde una hoja de datos".
++ Agregadas validaciones de hoja de datos en el módulo de importación.
+
 ## Versión 0.15
 + Modificada relación de campos obligatorios en los módulos de registro y modificación:
     + Nombre
@@ -44,7 +51,6 @@ Oticon es un sistema de punto de venta (POS) basado en la web.
 + Removida entrada manual para códigos de "Categoría", "Sección", "Marca" y "Proveedor".
 + Vista de lista de productos ahora muestra campos "ID", "Nombre de producto", "Precio de Costo", "Precio de Venta" y "Fecha de caducidad".
 + Removidos botones de agregar "Categoría" y "Sección" en el layout del módulo registro. En su lugar, pueden agregarse directamente mientras se registra un nuevo producto ("Categoría", "Sección", "Marca", "Proveedor" y "Medida de venta").
-
 
 ## Versión 0.09
 + Agregado layout de escritorio (pantallas de ancho mayor a 1024px).

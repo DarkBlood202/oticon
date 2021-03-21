@@ -1,0 +1,128 @@
+<%- include('partials/head.ejs') %>
+    <div class="lg:flex lg:h-screen">
+        <div class="lg:w-1/5">
+            <div id="desktop-menu"></div>
+        </div>
+        <div class="lg:mx-auto lg:mt-8 lg:mb-64 lg:w-3/5">
+            <div class="container bg-white rounded-xl shadow-md p-4 px-6 mx-auto mb-4">
+                <h1 class="font-bold text-4xl">Importar desde una hoja de datos</h1>
+                <p class="my-4 text-justify">
+                    Para importar productos desde un archivo de datos ya existente, deberás acceder al 
+                    <a href="/productos/registrar/importar" class="font-bold">módulo de importación de datos</a>.
+                    Actualmente el sistema soporta archivos de formato .xlsx con un tamaño menor a 5 MB.
+                    Una hoja de datos válida debe seguir la siguiente estructura:
+                </p>
+                <div class="flex flex-nowrap overflow-x-auto mb-4">
+                    <table class="bg-gray-100 rounded-3xl text-sm w-full">
+                        <thead>
+                            <tr>
+                                <th class="border-2 border-white px-4">nombre</th>
+                                <th class="border-2 border-white px-4">descripcion</th>
+                                <th class="border-2 border-white px-4">cantidad</th>
+                                <th class="font-normal border-2 border-white px-4">fechaCaducidad</th>
+                                <th class="font-normal border-2 border-white px-4">codigoMarca</th>
+                                <th class="font-normal border-2 border-white px-4">codigoProveedor</th>
+                                <th class="font-normal border-2 border-white px-4">codigoSeccion</th>
+                                <th class="font-normal border-2 border-white px-4">codigoCategoria</th>
+                                <th class="border-2 border-white px-4">precioCompra</th>
+                                <th class="border-2 border-white px-4">precioVenta</th>
+                                <th class="font-normal border-2 border-white px-4">precioMayorista</th>
+                                <th class="font-normal border-2 border-white px-4">cantidadMayorista</th>
+                                <th class="font-normal border-2 border-white px-4">idMedidaVenta</th>
+                                <th class="font-normal border-2 border-white px-4">cantidadEquivalente</th>
+                                <th class="font-normal border-2 border-white px-4">idMedidaAsociada</th>
+                                <th class="font-normal border-2 border-white px-4">codigoBarras</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="font-normal text-gray-100 border-2 border-white px-4 text-center">.</td>
+                                <td class="font-normal text-gray-100 border-2 border-white px-4 text-center">.</td>
+                                <td class="font-normal text-gray-100 border-2 border-white px-4 text-center">.</td>
+                                <td class="font-normal text-gray-100 border-2 border-white px-4 text-center">.</td>
+                                <td class="font-normal text-gray-100 border-2 border-white px-4 text-center">.</td>
+                                <td class="font-normal text-gray-100 border-2 border-white px-4 text-center">.</td>
+                                <td class="font-normal text-gray-100 border-2 border-white px-4 text-center">.</td>
+                                <td class="font-normal text-gray-100 border-2 border-white px-4 text-center">.</td>
+                                <td class="font-normal text-gray-100 border-2 border-white px-4 text-center">.</td>
+                                <td class="font-normal text-gray-100 border-2 border-white px-4 text-center">.</td>
+                                <td class="font-normal text-gray-100 border-2 border-white px-4 text-center">.</td>
+                                <td class="font-normal text-gray-100 border-2 border-white px-4 text-center">.</td>
+                                <td class="font-normal text-gray-100 border-2 border-white px-4 text-center">.</td>
+                                <td class="font-normal text-gray-100 border-2 border-white px-4 text-center">.</td>
+                                <td class="font-normal text-gray-100 border-2 border-white px-4 text-center">.</td>
+                                <td class="font-normal text-gray-100 border-2 border-white px-4 text-center">.</td>
+                            </tr>
+                            <tr>
+                                <td class="font-normal text-gray-100 border-2 border-white px-4 text-center">.</td>
+                                <td class="font-normal text-gray-100 border-2 border-white px-4 text-center">.</td>
+                                <td class="font-normal text-gray-100 border-2 border-white px-4 text-center">.</td>
+                                <td class="font-normal text-gray-100 border-2 border-white px-4 text-center">.</td>
+                                <td class="font-normal text-gray-100 border-2 border-white px-4 text-center">.</td>
+                                <td class="font-normal text-gray-100 border-2 border-white px-4 text-center">.</td>
+                                <td class="font-normal text-gray-100 border-2 border-white px-4 text-center">.</td>
+                                <td class="font-normal text-gray-100 border-2 border-white px-4 text-center">.</td>
+                                <td class="font-normal text-gray-100 border-2 border-white px-4 text-center">.</td>
+                                <td class="font-normal text-gray-100 border-2 border-white px-4 text-center">.</td>
+                                <td class="font-normal text-gray-100 border-2 border-white px-4 text-center">.</td>
+                                <td class="font-normal text-gray-100 border-2 border-white px-4 text-center">.</td>
+                                <td class="font-normal text-gray-100 border-2 border-white px-4 text-center">.</td>
+                                <td class="font-normal text-gray-100 border-2 border-white px-4 text-center">.</td>
+                                <td class="font-normal text-gray-100 border-2 border-white px-4 text-center">.</td>
+                                <td class="font-normal text-gray-100 border-2 border-white px-4 text-center">.</td>
+                            </tr>
+                            <tr>
+                                <td class="font-normal text-gray-100 border-2 border-white px-4 text-center">.</td>
+                                <td class="font-normal text-gray-100 border-2 border-white px-4 text-center">.</td>
+                                <td class="font-normal text-gray-100 border-2 border-white px-4 text-center">.</td>
+                                <td class="font-normal text-gray-100 border-2 border-white px-4 text-center">.</td>
+                                <td class="font-normal text-gray-100 border-2 border-white px-4 text-center">.</td>
+                                <td class="font-normal text-gray-100 border-2 border-white px-4 text-center">.</td>
+                                <td class="font-normal text-gray-100 border-2 border-white px-4 text-center">.</td>
+                                <td class="font-normal text-gray-100 border-2 border-white px-4 text-center">.</td>
+                                <td class="font-normal text-gray-100 border-2 border-white px-4 text-center">.</td>
+                                <td class="font-normal text-gray-100 border-2 border-white px-4 text-center">.</td>
+                                <td class="font-normal text-gray-100 border-2 border-white px-4 text-center">.</td>
+                                <td class="font-normal text-gray-100 border-2 border-white px-4 text-center">.</td>
+                                <td class="font-normal text-gray-100 border-2 border-white px-4 text-center">.</td>
+                                <td class="font-normal text-gray-100 border-2 border-white px-4 text-center">.</td>
+                                <td class="font-normal text-gray-100 border-2 border-white px-4 text-center">.</td>
+                                <td class="font-normal text-gray-100 border-2 border-white px-4 text-center">.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="mt-4 text-justify">
+                    La primera fila deberá contener alguno o todos los encabezados presentados en la tabla superior.
+                    Sin embargo, para que una hoja de datos se considere válida deberá cumplir con las características:
+                    <ul class="ml-4 list-disc list-inside">
+                        <li>Los nombre de los encabezados deberán ser exactamente iguales a los presentados en la tabla superior <span class="font-bold underline">(NO agregar nuevos)</span>.</li>
+                        <li>Todos los datos deberán encontrarse únicamente en la primera hoja del archivo (no es necesario darle un nombre).</li>
+                        <li>El archivo <span class="font-bold underline">NO</span> deberá contener celdas con ningún formato personalizado (colores, estilo de fuente, etc).</li>
+                        <li>El archivo deberá contener <span class="font-bold underline">solamente datos</span> (evitar fórmulas y referencias).</li>
+                    </ul>
+                </p>
+                <p class="mt-4 text-justify">
+                    Adicionalmente, para que una hoja de datos pueda considerarse válida, deberá incluir <span class="font-bold underline">como mínimo</span> a todos los encabezados de:
+                    <ul class="ml-4 list-disc list-inside">
+                        <li>nombre</li>
+                        <li>descripcion</li>
+                        <li>cantidad</li>
+                        <li>precioCompra</li>
+                        <li>precioVenta</li>
+                    </ul>
+                    De lo contrario, el sistema rechazará la hoja por no haber datos suficientes.
+                </p>
+                <p class="my-4 text-justify">
+                    Tras seleccionar la hoja de datos con el formato correcto y cargarla al sistema, se te mostrará una vista de tabla a modo de previsualización.
+                    Aquí podrás comprobar si los datos que has cargado al sistema son los corretos y si quieres importarlos (siempre puedes modificarlos despúes, por supuesto).
+                    Si estás de acuerdo con los datos mostrándose en pantalla, pulsa el botón de <strong>Importar</strong> (de lo contrario, retrocede para cargar un nuevo archivo o salir).
+                </p>
+                <p class="my-4 text-justify">
+                    Si recibes la notificación exitosa, !felicidades! has importado los datos de tu archivo de datos al sistema. Ya puedes visualizarlos en la 
+                    <a href="/productos" class="font-bold">vista de lista de productos</a>.
+                </p>
+            </div>
+        </div>
+    </div>
+<%- include('partials/foot.ejs') %>

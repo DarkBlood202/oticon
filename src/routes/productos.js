@@ -15,7 +15,7 @@ const Proveedor = require('../models/Proveedor');
 router.get('/productos', async(req, res)=>{
     const productos = await Producto.find({},null,{
         sort: {
-            nombre: 'asc'
+            idProducto: 'asc'
         }
     });
     res.json(productos);
