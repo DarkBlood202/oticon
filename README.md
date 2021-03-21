@@ -8,6 +8,21 @@ Oticon es un sistema de punto de venta (POS) basado en la web.
 + Eliminación de productos registrados.
 ---
 # Notas de versión
+## Versión 0.15
++ Modificada relación de campos obligatorios en los módulos de registro y modificación:
+    + Nombre
+    + Descripción
+    + Cantidad
+    + Sección
+    + Categoría
+    + Medida de venta
+    + Precio de compra
+    + Precio de venta
++ Corregido error donde se podían agregar Marcas, Secciones, Proveedores y Categorías duplicadas.
++ Corregido error donde se podían agregar Marcas, Secciones, Proveedores y Categorías con nombres en blanco.
++ Validaciones en los módulos de registro y modificación de productos y campos ahora muestra qué campos son inválidos.
++ Tamaño máximo del archivo de datos establecido en 5MB
+
 ## Versión 0.14
 + Agregadas validaciones al módulo de registro y modificación de producto.
 

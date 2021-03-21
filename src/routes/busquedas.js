@@ -54,6 +54,13 @@ router.get('/marca/:q', async(req, res)=>{
     res.json(marcas);
 });
 
+router.get('/marca-e/:q', async(req, res)=>{
+    const marcas = await Marca.find({
+        nombre: req.params.q,
+    });
+    res.json(marcas);
+});
+
 /** PROVEEDORES **/
 router.get('/proveedor/:q', async(req, res)=>{
     const proveedores = await Proveedor.find({
@@ -67,6 +74,13 @@ router.get('/proveedor/:q', async(req, res)=>{
         ]
     })
     
+    res.json(proveedores);
+});
+
+router.get('/proveedor-e/:q', async(req, res)=>{
+    const proveedores = await Proveedor.find({
+        nombre: req.params.q,
+    });
     res.json(proveedores);
 });
 
@@ -86,6 +100,13 @@ router.get('/seccion/:q', async(req, res)=>{
     res.json(secciones);
 });
 
+router.get('/seccion-e/:q', async(req, res)=>{
+    const secciones = await Seccion.find({
+        nombre: req.params.q,
+    });
+    res.json(secciones);
+});
+
 /** CATEGORÍAS **/
 router.get('/categoria/:q', async(req, res)=>{
     const categorias = await Categoria.find({
@@ -99,6 +120,13 @@ router.get('/categoria/:q', async(req, res)=>{
         ]
     })
     
+    res.json(categorias);
+});
+
+router.get('/categoria-e/:q', async(req, res)=>{
+    const categorias = await Categoria.find({
+        nombre: req.params.q,
+    });
     res.json(categorias);
 });
 

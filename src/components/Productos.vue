@@ -32,9 +32,9 @@
                             <td class="font-normal border-2 border-white px-4 text-center">{{ producto.idProducto }}</td>
                             <td class="font-normal border-2 border-white px-4 text-center">{{ producto.nombre }}</td>
                             <td v-bind:class="producto.cantidad <= 100 ? ['bg-red-100', 'font-bold', 'text-red-900'] : (producto.cantidad <= 333 ? 'bg-yellow-100' : 'bg-green-100')" class="font-normal border-2 border-white px-4 text-center">{{ producto.cantidad }}</td>
-                            <td class="font-normal border-2 border-white px-4 text-center">{{ producto.precioCompra ? producto.precioCompra.toFixed(2) : "NO-DEFINIDO-" }}</td>
-                            <td class="font-normal border-2 border-white px-4 text-center">{{ producto.precioVenta  ? producto.precioVenta.toFixed(2) : "-NO DEFINIDO-" }} (x{{ producto.cantidadMayorista }})</td>
-                            <td class="font-normal border-2 border-white px-4 text-center">{{ (producto.fechaCaducidad.substring(0,10)).split("-").reverse().join("/") }}</td>
+                            <td class="font-normal border-2 border-white px-4 text-center">{{ producto.precioCompra ? producto.precioCompra.toFixed(2) : "-NO DEFINIDO-" }}</td>
+                            <td class="font-normal border-2 border-white px-4 text-center">{{ producto.precioVenta  ? producto.precioVenta.toFixed(2) : "-NO DEFINIDO-" }}</td>
+                            <td class="font-normal border-2 border-white px-4 text-center">{{ producto.fechaCaducidad ? (producto.fechaCaducidad.substring(0,10)).split("-").reverse().join("/") : "-NO DEFINIDO-" }}</td>
                             <td class="font-normal border-2 border-white px-6 text-center"><button @click="seleccionarProducto(producto._id)" class="font-bold hover:text-gray-300 anicon">n</button></td>
                             <td class="font-normal border-2 border-white px-6 text-center"><button @click="eliminarProducto(producto._id)" class="font-bold text-red-500 hover:text-red-300 font-mono">X</button></td>
                         </tr>
@@ -83,19 +83,24 @@
                     <div class="my-4">
                         <label class="uppercase">Nombre</label><br>
                         <input type="text" required v-model="producto.nombre" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
+                        <label v-if="showRed" v-bind:class="producto.nombre ? ['hidden'] : ['block', 'text-xs','text-red-500', 'uppercase']">Nombre no puede quedar vacío.</label>
                     </div>
                     <div class="my-4">
                         <label class="uppercase">Descripcion</label><br>
                         <input type="text" required v-model="producto.descripcion" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
+                        <label v-if="showRed" v-bind:class="producto.descripcion ? ['hidden'] : ['block', 'text-xs','text-red-500', 'uppercase']">Descripción no puede quedar vacía.</label>
                     </div>
                     <div class="grid grid-cols-2 gap-4 my-4">
                         <div class="col-span-1">
                             <label class="uppercase">Cantidad</label><br>
-                            <input type="number" required v-model="producto.cantidad" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
+                            <input type="number" min="0" required v-model="producto.cantidad" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
+                            <label v-if="showRed" v-bind:class="producto.cantidad ? ['hidden'] : ['block', 'text-xs','text-red-500', 'uppercase']">Cantidad no puede quedar vacía.</label>
+                            <label v-if="showRed" v-bind:class="producto.cantidad >= 0 ? ['hidden'] : ['block', 'text-xs','text-red-500', 'uppercase']">Cantidad no puede ser negativa.</label>
+                            <label v-if="showRed" v-bind:class="producto.cantidad == parseInt(producto.cantidad, 10) ? ['hidden'] : ['block', 'text-xs','text-red-500', 'uppercase']">Cantidad solo puede tomar valores enteros.</label>
                         </div>
                         <div class="col-span-1">
                             <label class="uppercase">Fecha caducidad</label><br>
-                            <input type="date" v-model="reqFecha" required class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
+                            <input type="date" v-model="reqFecha" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
                         </div>
                     </div>
                 </div>
@@ -104,8 +109,8 @@
                     <div class="grid grid-cols-2 gap-8 my-4">
                         <div class="col-span-1">
                             <label class="uppercase">Marca</label><i @click="newMarca = onNew = true" class="ml-4 fas fa-plus-circle hover:text-gray-400 cursor-pointer"></i><br>
-                            <select required v-model="producto.codigoMarca" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
-                                <option disabled value="">Seleccionar marca</option>
+                            <select v-model="producto.codigoMarca" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
+                                <option value="">Seleccionar marca</option>
                                 <option v-for="(marca, it) in lista_marcas" :key="it" v-bind:value="marca.codigo">
                                     {{ marca.codigo }}: {{ marca.nombre }}
                                 </option>
@@ -113,8 +118,8 @@
                         </div>
                         <div class="col-span-1">
                             <label class="uppercase">Proveedor</label><i @click="newProveedor = onNew = true" class="ml-4 fas fa-plus-circle hover:text-gray-400 cursor-pointer"></i><br>
-                            <select required v-model="producto.codigoProveedor" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
-                                <option disabled value="">Seleccionar proveedor</option>
+                            <select v-model="producto.codigoProveedor" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
+                                <option value="">Seleccionar proveedor</option>
                                 <option v-for="(proveedor, it) in lista_proveedores" :key="it" v-bind:value="proveedor.codigo">
                                     {{ proveedor.codigo }}: {{ proveedor.nombre }}
                                 </option>
@@ -129,6 +134,7 @@
                                 {{ seccion.codigo }}: {{ seccion.nombre }}
                             </option>
                         </select>
+                        <label v-if="showRed" v-bind:class="producto.codigoSeccion ? ['hidden'] : ['block', 'text-xs','text-red-500', 'uppercase']">Sección no puede quedar vacía.</label>
                     </div>
                     <div class="my-4">
                         <label class="uppercase">Categoria</label><i @click="newCategoria = onNew = true" class="ml-4 fas fa-plus-circle hover:text-gray-400 cursor-pointer"></i><br>
@@ -138,6 +144,7 @@
                                 {{ categoria.codigo }}: {{ categoria.nombre }}
                             </option>
                         </select>
+                        <label v-if="showRed" v-bind:class="producto.codigoCategoria ? ['hidden'] : ['block', 'text-xs','text-red-500', 'uppercase']">Categoría no puede quedar vacía.</label>
                     </div>
                 </div>
 
@@ -150,23 +157,29 @@
                                 {{ medida.nombre }} ({{ medida.abreviacion }})
                             </option>
                         </select>
+                        <label v-if="showRed" v-bind:class="producto.idMedidaVenta ? ['hidden'] : ['block', 'text-xs','text-red-500', 'uppercase']">Medida de venta no puede quedar vacía.</label>
                     </div>
                     <div class="grid grid-cols-2 gap-8 my-4">
                         <div class="col-span-1">
                             <label class="uppercase">Precio compra</label><br>
-                            <input type="number" required v-model="producto.precioCompra" step="0.01" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
+                            <input type="number" min="0.01" required v-model="producto.precioCompra" step="0.01" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
+                            <label v-if="showRed" v-bind:class="producto.precioCompra ? ['hidden'] : ['block', 'text-xs','text-red-500', 'uppercase']">Precio de compra no puede quedar vacío.</label>
+                            <label v-if="showRed" v-bind:class="producto.precioCompra >= 0 ? ['hidden'] : ['block', 'text-xs','text-red-500', 'uppercase']">Precio de compra no puede ser negativo.</label>
                         </div>
                         <div class="col-span-1">
                             <label class="uppercase">Precio venta</label><br>
-                            <input type="number" required v-model="producto.precioVenta" step="0.01" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
+                            <input type="number" min="0.01" required v-model="producto.precioVenta" step="0.01" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
+                            <label v-if="showRed" v-bind:class="producto.precioVenta ? ['hidden'] : ['block', 'text-xs','text-red-500', 'uppercase']">Precio de venta no puede quedar vacío.</label>
+                            <label v-if="showRed" v-bind:class="parseFloat(producto.precioVenta) > parseFloat(producto.precioCompra) ? ['hidden'] : ['block', 'text-xs','text-red-500', 'uppercase']">Precio de venta debe ser mayor a precio de compra.</label>
+                            <label v-if="showRed" v-bind:class="producto.precioVenta >= 0 ? ['hidden'] : ['block', 'text-xs','text-red-500', 'uppercase']">Precio de venta no puede ser negativo.</label>
                         </div>
                     </div>
                     <div class="my-4">
                         <label class="uppercase">Precio mayorista</label><br>
                         <div class="grid grid-cols-9">
-                            <input type="number" required v-model="producto.precioMayorista" step="0.01" class="col-span-4 mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
+                            <input type="number" min="0.01" v-model="producto.precioMayorista" step="0.01" class="col-span-4 mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
                             <span class="col-span-1 pt-3 font-bold text-center">X</span>
-                            <input type="number" required v-model="producto.cantidadMayorista" class="col-span-4 mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
+                            <input type="number" min="0" v-model="producto.cantidadMayorista" class="col-span-4 mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
                             <span class="col-end-9 sm:col-end-10 text-right text-xs uppercase">Unidades...</span>
                         </div>
                     </div>
@@ -179,9 +192,9 @@
                         <div class="grid grid-cols-9 gap-4">
                             <span class="col-span-2 block text-center">1 unidad</span>
                             <span class="col-span-1 block text-center font-bold font-xl">=</span>
-                            <input type="number" required v-model="producto.cantidadEquivalente" step="0.001" class="col-span-3 pl-2 py-1 rounded-full border-2 border-yellow-500">
-                            <select required v-model="producto.idMedidaAsociada" class="col-span-3 pl-2 py-1 rounded-full border-2 border-yellow-500">
-                                <option disabled value="">Seleccionar medida de venta</option>
+                            <input type="number" v-model="producto.cantidadEquivalente" step="0.001" class="col-span-3 pl-2 py-1 rounded-full border-2 border-yellow-500">
+                            <select v-model="producto.idMedidaAsociada" class="col-span-3 pl-2 py-1 rounded-full border-2 border-yellow-500">
+                                <option value="">Seleccionar medida de venta</option>
                                 <option v-for="(medida, it) in lista_medidas" :key="it" v-bind:value="medida._id">
                                     {{ medida.nombre }} ({{ medida.abreviacion }})
                                 </option>
@@ -201,7 +214,7 @@
                 <div class="grid grid-cols-2 gap-4 mt-10 mb-2">
                     <button type="button" @click="modificando = false" v-show="stepCounter == 1" class="bg-red-500 hover:bg-red-400 rounded-2xl p-4 font-bold text-white text-xl">Cancelar</button>
                     <button type="button" v-show="stepCounter > 1" @click="goToPaso(-1)" class="bg-yellow-500 hover:bg-yellow-400 rounded-2xl p-4 font-bold text-white text-xl">Anterior</button>
-                    <button type="button" v-show="stepCounter < maxStep" @click="goToPaso(1)" class="bg-yellow-500 hover:bg-yellow-400 rounded-2xl p-4 font-bold text-white text-xl">Siguiente</button>
+                    <button type="button" v-show="stepCounter < maxStep" @click="goToPaso(1)" v-bind:class="nextIsDisabled ? ['bg-gray-300', 'hover:bg-gray-300', 'text-gray-200', 'cursor-not-allowed'] : ['bg-yellow-500', 'hover:bg-yellow-400']" class="rounded-2xl p-4 font-bold text-white text-xl">Siguiente</button>
                     <button type="submit" v-show="stepCounter == maxStep" class="bg-indigo-500 hover:bg-indigo-400 rounded-2xl p-4 font-bold text-white text-xl">Terminar</button>
                 </div>
             </form>
@@ -357,6 +370,7 @@ export default {
             newCategoria: false,
             newMedida: false,
             nextIsDisabled: true,
+            showRed: false,
 
             p_marca: {},
             p_proveedor: {},
@@ -566,19 +580,29 @@ export default {
         },
 
         goToPaso(paso){
+            if(paso == 1 && !this.showRed){
+                this.showRed = true;
+            }
             if(paso == 1 && this.nextIsDisabled){
                 return;
             }
+
+            if(paso == 1){ this.showRed = false; }
+            if(paso == -1){ this.showRed = true; }
+
             this.stepCounter = this.stepCounter + paso;
             this.stepCounter = Math.min(Math.max(this.stepCounter, 1), this.maxStep);
         },
+
         validacion(){
             switch(this.stepCounter){
                 case 1:
                     if(
                         this.producto.nombre &&
                         this.producto.descripcion &&
-                        this.producto.cantidad
+                        this.producto.cantidad &&
+                        this.producto.cantidad >= 0 &&
+                        this.producto.cantidad == parseInt(this.producto.cantidad, 10)
                     ){
                         this.nextIsDisabled = false;
                     }
@@ -589,8 +613,6 @@ export default {
                 
                 case 2:
                     if(
-                        this.producto.codigoMarca &&
-                        this.producto.codigoProveedor &&
                         this.producto.codigoSeccion &&
                         this.producto.codigoCategoria
                     ){
@@ -605,9 +627,10 @@ export default {
                     if(
                         this.producto.idMedidaVenta &&
                         this.producto.precioCompra &&
+                        this.producto.precioCompra >= 0 &&
                         this.producto.precioVenta &&
-                        this.producto.precioMayorista &&
-                        this.producto.cantidadMayorista
+                        this.producto.precioVenta >= 0 &&
+                        parseFloat(this.producto.precioVenta) > parseFloat(this.producto.precioCompra)
                     ){
                         this.nextIsDisabled = false;
                     }
@@ -615,25 +638,23 @@ export default {
                         this.nextIsDisabled = true;
                     }
                     break;
-
-                case 4:
-                    if(
-                        this.producto.cantidadEquivalente &&
-                        this.producto.idMedidaAsociada
-                    ){
-                        this.nextIsDisabled = false;
-                    }
-                    else{
-                        this.nextIsDisabled = true;
-                    }
-                    break;
-
             }
         },
-        fixFecha(){
-            this.producto.fechaCaducidad = moment(this.reqFecha).format();
-        },
 
+        fixFecha(){
+            if(
+                this.producto.fechaCaducidad &&
+                this.reqFecha &&
+                typeof this.producto.fechaCaducidad != 'undefined' &&
+                typeof this.reqFecha != 'undefined'
+            ){
+                this.producto.fechaCaducidad = moment(this.reqFecha).format();
+            }
+            else{
+                this.reqFecha = null;
+                this.producto.fechaCaducidad = null;
+            }
+        },
 
         buscarProducto(){
             if(this.query != ""){

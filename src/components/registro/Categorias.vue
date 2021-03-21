@@ -29,11 +29,13 @@
                 <form @submit.prevent="modificarCategoria">
                     <div class="my-4">
                         <label class="uppercase">Nombre</label>
-                        <input type="text" required v-model="categoria.nombre" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
+                        <input type="text" @input="buscarCategoriaExacta" required v-model="categoria.nombre" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
+                        <label v-if="showRed" v-bind:class="!exists ? ['hidden'] : ['block', 'text-xs','text-red-500', 'uppercase']">Categoría ya existente.</label>
+                        <label v-if="showRed" v-bind:class="categoria.nombre ? ['hidden'] : ['block', 'text-xs','text-red-500', 'uppercase']">Categoría no puede quedar vacía.</label>
                     </div>
                     <div class="grid grid-cols-2 gap-4 mt-10 mb-2">
                         <button type="button" @click="modificando = false" class="bg-red-500 hover:bg-red-400 rounded-2xl p-4 font-bold text-white text-xl">Cancelar</button>
-                        <button type="submit" class="bg-indigo-500 hover:bg-indigo-400 rounded-2xl p-4 font-bold text-white text-xl">Modificar</button>
+                        <button type="submit" v-bind:class="modIsDisabled ? ['bg-gray-300', 'hover:bg-gray-300', 'text-gray-200', 'cursor-not-allowed'] : ['bg-indigo-500', 'hover:bg-indigo-400']" class="rounded-2xl p-4 font-bold text-white text-xl">Agregar</button>
                     </div>
                 </form>
             </div>
@@ -44,11 +46,13 @@
                 <form @submit.prevent="agregarCategoria">
                     <div class="my-4">
                         <label class="uppercase">Nombre</label>
-                        <input type="text" required v-model="n_categoria.nombre" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
+                        <input type="text" @input="buscarCategoriaExacta" required v-model="n_categoria.nombre" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
+                        <label v-if="showRed" v-bind:class="!exists ? ['hidden'] : ['block', 'text-xs','text-red-500', 'uppercase']">Categoría ya existente.</label>
+                        <label v-if="showRed" v-bind:class="n_categoria.nombre ? ['hidden'] : ['block', 'text-xs','text-red-500', 'uppercase']">Categoría no puede quedar vacía.</label>
                     </div>
                     <div class="grid grid-cols-2 gap-4 mt-10 mb-2">
                         <button type="button" @click="agregando = false" class="bg-red-500 hover:bg-red-400 rounded-2xl p-4 font-bold text-white text-xl">Cancelar</button>
-                        <button type="submit" class="bg-indigo-500 hover:bg-indigo-400 rounded-2xl p-4 font-bold text-white text-xl">Agregar</button>
+                        <button type="submit" v-bind:class="addIsDisabled ? ['bg-gray-300', 'hover:bg-gray-300', 'text-gray-200', 'cursor-not-allowed'] : ['bg-indigo-500', 'hover:bg-indigo-400']" class="rounded-2xl p-4 font-bold text-white text-xl">Agregar</button>
                     </div>
                 </form>
             </div>
@@ -78,10 +82,17 @@ export default {
             selected: "",
             modificando: false,
             agregando: false,
+
+            exists: false,
+            addIsDisabled: true,
+            modIsDisabled: true,
+            showRed: false,
         }
     },
     created(){
         this.obtenerCategorias();
+
+        this.interval = setInterval(() => this.validacion(), 100);
     },
     methods: {
         obtenerCategorias(){
@@ -101,6 +112,45 @@ export default {
                 this.obtenerCategorias();
             }
         },
+        buscarCategoriaExacta(){
+            if(!this.showRed){ this.showRed = true; }
+            if(this.agregando){
+                if(this.n_categoria.nombre != ""){
+                    axios.get('/buscar/categoria-e/' + this.n_categoria.nombre)
+                        .then(res => {
+                            if(res.data[0]){
+                                if(this.n_categoria.nombre == res.data[0].nombre){
+                                    this.exists = true;
+                                }
+                                else{
+                                    this.exists = false;
+                                }
+                            }
+                            else{
+                                this.exists = false;
+                            }
+                        });
+                }
+            }
+            else if(this.modificando){
+                if(this.categoria.nombre != ""){
+                    axios.get('/buscar/categoria-e/' + this.categoria.nombre)
+                        .then(res => {
+                            if(res.data[0]){
+                                if(this.categoria.nombre == res.data[0].nombre){
+                                    this.exists = true;
+                                }
+                                else{
+                                    this.exists = false;
+                                }
+                            }
+                            else{
+                                this.exists = false;
+                            }
+                        });
+                }
+            }
+        },
         eliminarCategoria(codigo){
             axios.delete('/api/categorias/' + codigo)
                 .then(res => {
@@ -116,19 +166,49 @@ export default {
                 });
         },
         modificarCategoria(){
-            axios.put('/api/categorias/' + this.selected, this.categoria)
+            if(!this.modIsDisabled){
+                axios.put('/api/categorias/' + this.selected, this.categoria)
                 .then(res => {
                     this.obtenerCategorias();
                     this.modificando = false;
                 });
+            }
         },
         agregarCategoria(){
-            axios.post('/api/categorias', this.n_categoria)
+            if(!this.addIsDisabled){
+                axios.post('/api/categorias', this.n_categoria)
                 .then(res => {
                     this.n_categoria = {};
                     this.obtenerCategorias();
                     this.agregando = false;
                 });
+            }
+        },
+
+        validacion(){
+            if(this.agregando){
+                if(
+                    !this.n_categoria.nombre ||
+                    this.exists
+                ){
+                    this.addIsDisabled = true;
+                }
+                else{
+                    this.addIsDisabled = false;
+                }
+            }
+            else if(this.modificando){
+                if(
+                    !this.categoria.nombre ||
+                    this.exists
+                ){
+                    this.modIsDisabled = true;
+                }
+                else{
+                    this.modIsDisabled = false;
+                }
+            }
+            
         },
     }
 }

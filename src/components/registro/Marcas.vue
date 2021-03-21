@@ -29,11 +29,13 @@
                 <form @submit.prevent="modificarMarca">
                     <div class="my-4">
                         <label class="uppercase">Nombre</label>
-                        <input type="text" required v-model="marca.nombre" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
+                        <input type="text" @input="buscarMarcaExacta" required v-model="marca.nombre" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
+                        <label v-if="showRed" v-bind:class="!exists ? ['hidden'] : ['block', 'text-xs','text-red-500', 'uppercase']">Marca ya existente.</label>
+                        <label v-if="showRed" v-bind:class="marca.nombre ? ['hidden'] : ['block', 'text-xs','text-red-500', 'uppercase']">Marca no puede quedar vacía.</label>
                     </div>
                     <div class="grid grid-cols-2 gap-4 mt-10 mb-2">
                         <button type="button" @click="modificando = false" class="bg-red-500 hover:bg-red-400 rounded-2xl p-4 font-bold text-white text-xl">Cancelar</button>
-                        <button type="submit" class="bg-indigo-500 hover:bg-indigo-400 rounded-2xl p-4 font-bold text-white text-xl">Modificar</button>
+                        <button type="submit" v-bind:class="modIsDisabled ? ['bg-gray-300', 'hover:bg-gray-300', 'text-gray-200', 'cursor-not-allowed'] : ['bg-indigo-500', 'hover:bg-indigo-400']" class="rounded-2xl p-4 font-bold text-white text-xl">Modificar</button>
                     </div>
                 </form>
             </div>
@@ -44,11 +46,13 @@
                 <form @submit.prevent="agregarMarca">
                     <div class="my-4">
                         <label class="uppercase">Nombre</label>
-                        <input type="text" required v-model="n_marca.nombre" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
+                        <input type="text" @input="buscarMarcaExacta" required v-model="n_marca.nombre" class="mt-1 pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
+                        <label v-if="showRed" v-bind:class="!exists ? ['hidden'] : ['block', 'text-xs','text-red-500', 'uppercase']">Marca ya existente.</label>
+                        <label v-if="showRed" v-bind:class="n_marca.nombre ? ['hidden'] : ['block', 'text-xs','text-red-500', 'uppercase']">Marca no puede quedar vacía.</label>
                     </div>
                     <div class="grid grid-cols-2 gap-4 mt-10 mb-2">
                         <button type="button" @click="agregando = false" class="bg-red-500 hover:bg-red-400 rounded-2xl p-4 font-bold text-white text-xl">Cancelar</button>
-                        <button type="submit" class="bg-indigo-500 hover:bg-indigo-400 rounded-2xl p-4 font-bold text-white text-xl">Agregar</button>
+                        <button type="submit" v-bind:class="addIsDisabled ? ['bg-gray-300', 'hover:bg-gray-300', 'text-gray-200', 'cursor-not-allowed'] : ['bg-indigo-500', 'hover:bg-indigo-400']" class="rounded-2xl p-4 font-bold text-white text-xl">Agregar</button>
                     </div>
                 </form>
             </div>
@@ -78,10 +82,17 @@ export default {
             selected: null,
             modificando: false,
             agregando: false,
+
+            exists: false,
+            addIsDisabled: true,
+            modIsDisabled: true,
+            showRed: false,
         }
     },
     created(){
         this.obtenerMarcas();
+
+        this.interval = setInterval(() => this.validacion(), 100);
     },
     methods: {
         obtenerMarcas(){
@@ -101,6 +112,45 @@ export default {
                 this.obtenerMarcas();
             }
         },
+        buscarMarcaExacta(){
+            if(!this.showRed){ this.showRed = true; }
+            if(this.agregando){
+                if(this.n_marca.nombre != ""){
+                    axios.get('/buscar/marca-e/' + this.n_marca.nombre)
+                        .then(res => {
+                            if(res.data[0]){
+                                if(this.n_marca.nombre == res.data[0].nombre){
+                                    this.exists = true;
+                                }
+                                else{
+                                    this.exists = false;
+                                }
+                            }
+                            else{
+                                this.exists = false;
+                            }
+                        });
+                }
+            }
+            else if(this.modificando){
+                if(this.marca.nombre != ""){
+                    axios.get('/buscar/marca-e/' + this.marca.nombre)
+                        .then(res => {
+                            if(res.data[0]){
+                                if(this.marca.nombre == res.data[0].nombre){
+                                    this.exists = true;
+                                }
+                                else{
+                                    this.exists = false;
+                                }
+                            }
+                            else{
+                                this.exists = false;
+                            }
+                        });
+                }
+            }
+        },
         eliminarMarca(codigo){
             axios.delete('/api/marcas/' + codigo)
                 .then(res => {
@@ -111,24 +161,54 @@ export default {
             axios.get('/api/marcas/' + codigo)
                 .then(res => {
                     this.marca = new Marca(res.data[0]);
-                    this.selected = res.data[0].codigo
+                    this.selected = res.data[0].codigo;
                     this.modificando = true;
                 });
         },
         modificarMarca(){
-            axios.put('/api/marcas/' + this.selected, this.marca)
+            if(!this.modIsDisabled){
+                axios.put('/api/marcas/' + this.selected, this.marca)
                 .then(res => {
                     this.obtenerMarcas();
                     this.modificando = false;
                 });
+            }
         },
         agregarMarca(){
-            axios.post('/api/marcas', this.n_marca)
+            if(!this.addIsDisabled){
+                axios.post('/api/marcas', this.n_marca)
                 .then(res => {
                     this.n_marca = {};
                     this.obtenerMarcas();
                     this.agregando = false;
                 });
+            }
+        },
+
+        validacion(){
+            if(this.agregando){
+                if(
+                    !this.n_marca.nombre ||
+                    this.exists
+                ){
+                    this.addIsDisabled = true;
+                }
+                else{
+                    this.addIsDisabled = false;
+                }
+            }
+            else if(this.modificando){
+                if(
+                    !this.marca.nombre ||
+                    this.exists
+                ){
+                    this.modIsDisabled = true;
+                }
+                else{
+                    this.modIsDisabled = false;
+                }
+            }
+            
         },
     }
 }
