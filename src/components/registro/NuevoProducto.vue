@@ -147,6 +147,11 @@
                         <p class="my-4 text-justify text-xs text-gray-500">Adicionalmente puede ingresar un código de barras (si dispone de uno) para identificar sus productos.</p>
                         <input type="text" v-model="producto.codigoBarras" class="pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
                     </div>
+                    <div class="my-4">
+                        <label class="uppercase">Código antiguo</label>
+                        <p class="my-4 text-justify text-xs text-gray-500">Si su producto pertenecía a alguna base de datos anterior y tiene un identificador, puede referirlo aquí.</p>
+                        <input type="text" v-model="producto.codigoAntiguo" class="pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-2 gap-4 mt-10 mb-2">
@@ -271,6 +276,7 @@ class Producto{
         this.idMedidaAsociada = "";
         this.codigoBarras = undefined;
         this.idProducto = null;
+        this.codigoAntiguo = "";
     }
 }
 

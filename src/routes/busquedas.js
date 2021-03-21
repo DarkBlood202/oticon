@@ -26,6 +26,12 @@ router.get('/producto/:q', async(req, res)=>{
                     "$options": "i",
                 }
             },
+            {
+                codigoAntiguo: {
+                    "$regex": req.params.q,
+                    "$options": "i",
+                }
+            },
         ]
     });
     res.json(productos);

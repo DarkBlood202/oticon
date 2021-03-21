@@ -1,10 +1,22 @@
 <template>
     <div>
-        <div v-show="!modificando && !onNew" class="container bg-white rounded-xl shadow-md p-4 px-6 mx-auto mb-4">
+        <div v-show="eliminando" class="container bg-white rounded-xl shadow-md p-4 px-6 mx-auto mb-4">
+            <h3 class="font-bold text-4xl">¡CUIDADO!</h3>
+            <h3 class="text-gray-500 text-xl my-4">Estás a punto de <span class="font-bold text-black underline">eliminar</span> un producto del sistema de forma permanente.</h3>
+            <h3 class="bg-gray-100 rounded-3xl w-full text-center p-2">{{ this.reqEliminacion.nombre ? this.reqEliminacion.nombre : "No name found" }} (ID #{{ this.reqEliminacion.idProducto ? ("0000" + this.reqEliminacion.idProducto).slice(-5) : "No ID found" }})</h3>
+            <h3 class="text-gray-500 text-xl my-4">¿Continuar?</h3>
+            <div class="grid grid-cols-2 gap-4 mt-4 mb-2">
+                <button @click="eliminando = false" class="bg-yellow-500 hover:bg-yellow-400 rounded-2xl p-4 font-bold text-white text-xl">Volver</button>
+                <button @click="confirmarEliminacion" class="bg-red-500 hover:bg-red-400 rounded-2xl p-4 font-bold text-white text-xl">
+                    Eliminar <i class="fas fa-exclamation-triangle"></i>
+                </button>
+            </div>
+        </div>
+        <div v-show="!modificando && !onNew && !eliminando" class="container bg-white rounded-xl shadow-md p-4 px-6 mx-auto mb-4">
             <h1 class="font-bold text-4xl">Productos</h1>
             <i class="absolute ml-2.5 mt-6 fas fa-search"></i>
             <form class="flex my-4 mb-8 gap-4">
-                <input @input="buscarProducto" v-model="query" type="text" placeholder="Buscar por nombre, id, código..." class="rounded-full border-2 border-yellow-500 pl-7 px-4 py-1 w-3/5">
+                <input @input="buscarProducto" v-model="query" type="text" placeholder="Buscar por nombre o código..." class="rounded-full border-2 border-yellow-500 pl-7 px-4 py-1 w-3/5">
                 <select v-model="filtro" @change="filtrarProductos" class="rounded-full border-2 border-yellow-500 px-4 py-1 w-2/5">
                     <option value="0">Ordenar por...</option>
                     <option value="3">ID ascendente</option>
@@ -34,7 +46,7 @@
                             <td v-bind:class="producto.cantidad <= 100 ? ['bg-red-100', 'font-bold', 'text-red-900'] : (producto.cantidad <= 333 ? 'bg-yellow-100' : 'bg-green-100')" class="font-normal border-2 border-white px-4 text-center">{{ producto.cantidad }}</td>
                             <td class="font-normal border-2 border-white px-4 text-center">{{ producto.precioCompra ? producto.precioCompra.toFixed(2) : "-NO DEFINIDO-" }}</td>
                             <td class="font-normal border-2 border-white px-4 text-center">{{ producto.precioVenta  ? producto.precioVenta.toFixed(2) : "-NO DEFINIDO-" }}</td>
-                            <td class="font-normal border-2 border-white px-4 text-center">{{ producto.fechaCaducidad ? (producto.fechaCaducidad.substring(0,10)).split("-").reverse().join("/") : "-NO DEFINIDO-" }}</td>
+                            <td class="font-normal border-2 border-white px-4 text-center">{{ producto.fechaCaducidad ? (producto.fechaCaducidad.substring(0,10)).split("-").reverse().join("/") : "No aplica" }}</td>
                             <td class="font-normal border-2 border-white px-6 text-center"><button @click="seleccionarProducto(producto._id)" class="font-bold hover:text-gray-300 anicon">n</button></td>
                             <td class="font-normal border-2 border-white px-6 text-center"><button @click="eliminarProducto(producto._id)" class="font-bold text-red-500 hover:text-red-300 font-mono">X</button></td>
                         </tr>
@@ -192,6 +204,11 @@
                         <p class="my-4 text-justify text-xs text-gray-500">Adicionalmente puede ingresar un código de barras (si dispone de uno) para identificar sus productos.</p>
                         <input type="text" v-model="producto.codigoBarras" class="pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
                     </div>
+                    <div class="my-4">
+                        <label class="uppercase">Código antiguo</label>
+                        <p class="my-4 text-justify text-xs text-gray-500">Si su producto pertenecía a alguna base de datos anterior y tiene un identificador, puede referirlo aquí.</p>
+                        <input type="text" v-model="producto.codigoAntiguo" class="pl-2 py-1 rounded-full border-2 border-yellow-500 w-full">
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-2 gap-4 mt-10 mb-2">
@@ -316,6 +333,7 @@ class Producto{
         this.idMedidaAsociada = obj.idMedidaAsociada;
         this.codigoBarras = obj.codigoBarras;
         this.idProducto = obj.idProducto;
+        this.codigoAntiguo = obj.codigoAntiguo;
     }
 }
 
@@ -343,7 +361,8 @@ export default {
                 cantidadEquivalente: null,
                 idMedidaAsociada: "",
                 codigoBarras: undefined,
-                idProducto: null
+                idProducto: null,
+                codigoAntiguo: "",
             }),
 
             onNew: false,
@@ -372,8 +391,10 @@ export default {
             stepCounter: 1,
             maxStep: 5,
             modificando: false,
+            eliminando: false,
             reqProducto: "",
             reqFecha: null,
+            reqEliminacion: {},
             query: "",
             filtro: 0,
         }
@@ -526,13 +547,13 @@ export default {
                     this.reqProducto = data._id;
                     this.reqFecha = moment(this.producto.fechaCaducidad).format('YYYY-MM-DD');
                     this.modificando = true;
-                })
+                });
         },
         modificarProducto(){
             this.fixFecha();
-            let codigoSeccionF = ("00" + this.producto.codigoSeccion).slice(-3);
-            let codigoCategoriaF = ("00" + this.producto.codigoCategoria).slice(-3);
-            this.producto.idProducto = codigoSeccionF + codigoCategoriaF + this.producto.idProducto.slice(6);
+            // let codigoSeccionF = ("00" + this.producto.codigoSeccion).slice(-3);
+            // let codigoCategoriaF = ("00" + this.producto.codigoCategoria).slice(-3);
+            // this.producto.idProducto = codigoSeccionF + codigoCategoriaF + this.producto.idProducto.slice(6);
             fetch('api/productos/' + this.reqProducto, {
                 method: 'PUT',
                 body:   JSON.stringify(this.producto),
@@ -549,7 +570,15 @@ export default {
             this.modificando = false;
         },
         eliminarProducto(id){
-            fetch('/api/productos/' + id, {
+            fetch('api/productos/' + id)
+                .then(res => res.json())
+                .then(data => {
+                    this.reqEliminacion = data;
+                    this.eliminando = true;
+                });
+        },
+        confirmarEliminacion(){
+            fetch('/api/productos/' + this.reqEliminacion._id, {
                 method: 'DELETE',
                 headers: {
                     'Accept': 'application/json',
@@ -559,6 +588,7 @@ export default {
             .then(res => res.json())
             .then(data => {
                 this.obtenerProductos();
+                this.eliminando = false;
             });
         },
 

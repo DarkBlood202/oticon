@@ -34,6 +34,8 @@ const Producto = new Schema({
         unique: true,
     },
 
+    codigoAntiguo: String,
+
 }, {
     collection: 'productos'
 });
