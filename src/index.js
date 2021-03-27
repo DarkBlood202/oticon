@@ -1,21 +1,10 @@
 const express = require('express');
 const path = require('path');
 const morgan = require('morgan');
-const mongoose = require('mongoose');
-const AutoIncrement = require('mongoose-sequence')(mongoose);
 
-const connectionString = "mongodb+srv://dber:dber@oticon.tahsk.mongodb.net/oticon?retryWrites=true&w=majority";
-
+// Inits
 const app = express();
-
-mongoose.connect(connectionString, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useCreateIndex: true,
-    useFindAndModify: false,
-})
-    .then(db => console.log("Connected to database."))
-    .catch(err => console.error(err));
+require('./database');
 
 // Settings
 app.set('port', process.env.PORT || 5000);
@@ -31,6 +20,7 @@ app.use('/api', require('./routes/productos'));
 app.use('/uploads', require('./routes/uploads'));
 app.use('/buscar', require('./routes/busquedas'));
 app.use('/faq', require('./routes/faq'));
+app.use('/reportes', require('./routes/reportes'));
 app.use('/', require('./routes/routes'));
 
 // Static

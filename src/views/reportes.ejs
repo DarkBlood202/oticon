@@ -1,0 +1,29 @@
+<%- include('partials/head.ejs') %>
+    <div class="lg:flex lg:h-screen">
+        <div class="lg:w-1/5">
+            <div id="desktop-menu"></div>
+        </div>
+        <div class="lg:mx-auto lg:mt-8 lg:mb-64 lg:w-3/5">
+            
+            <div class="container bg-white rounded-xl shadow-md p-4 px-6 mx-auto mb-4">
+                <h1 class="font-bold text-4xl">Reportes</h1>
+                <h3 class="text-gray-500 text-xl my-4 mb-8">Seleccione un reporte</h3>
+                <div class="text-white font-bold text-xl text-center sm:text-2xl grid grid-cols-2 gap-4 my-4">
+                    <a href="/reportes" class="block col-span-2 bg-yellow-500 hover:bg-yellow-400 rounded-2xl py-4">
+                        <i class="fas fa-clipboard"></i><br>
+                        <span>Reporte del día</span>
+                    </a>
+                    <a href="/reportes/productos" class="block bg-yellow-500 hover:bg-yellow-400 rounded-2xl py-4">
+                        <i class="fas fa-box-open"></i><br>
+                        <span>Reporte de productos</span>
+                    </a>
+                    <a href="/reportes" class="block bg-yellow-500 hover:bg-yellow-400 rounded-2xl py-4">
+                        <i class="fas fa-file-invoice-dollar"></i><br>
+                        <span>Reporte de ventas</span>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+<%- include('partials/foot.ejs') %>

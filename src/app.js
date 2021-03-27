@@ -14,6 +14,8 @@ import Secciones from './components/registro/Secciones.vue';
 import Categorias from './components/registro/Categorias.vue';
 import MedidasVenta from './components/registro/MedidasVenta.vue';
 
+import ReporteProductos from './components/reportes/ReporteProductos.vue';
+
 new Vue({
     el: '#nav',
     render: h => h(NavBar),
@@ -62,4 +64,9 @@ new Vue({
 new Vue({
     el: "#medidas-view",
     render: h => h(MedidasVenta),
+});
+
+new Vue({
+    el: "#reporte-productos",
+    render: h => h(ReporteProductos),
 });
